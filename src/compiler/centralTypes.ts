@@ -17,13 +17,13 @@ export type ParserNode =
     | DotDivisionNode;
 
 export type PowerFactorType =
-    boolean
+    null
     | MNumber
     | PowerNode
     | DotPowerNode
 
 export type FactorType =
-    boolean
+    null
     | MNumber
     | PowerNode
     | MultiplyNode
@@ -33,7 +33,7 @@ export type FactorType =
     | DotDivisionNode;
 
 export type TermType =
-    boolean
+    null
     | MNumber
     | PowerNode
     | PlusNode

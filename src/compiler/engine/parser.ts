@@ -24,9 +24,38 @@ export class Parser {
         }
     }
 
-    public powerFactor() {
-        let n1: PowerFactorType = this.getNumber();
-        if (!n1) {
+    public parenthesisFactor(): TermType {
+        if (this.currentToken().type === TokenType.LEFT_PAREN) {
+            this.moveToNextToken();
+            let n1: TermType = this.term();
+            if (n1 === null) {
+                throw new Error(
+                    `Expected a number at position 
+                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
+                );
+            }
+            this.moveToNextToken();
+            if (this.currentToken().type !== TokenType.RIGHT_PAREN) {
+                throw new Error(
+                    `Expected a closing parenthesis at position 
+                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
+                );
+            }
+            return n1;
+        }
+        let n: PowerFactorType = this.getNumber();
+        if (n === null) {
+            throw new Error(
+                `Expected a number at position 
+                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
+            );
+        }
+        return n;
+    }
+
+    public powerFactor(): PowerFactorType {
+        let n1: TermType = this.parenthesisFactor()//this.getNumber();
+        if (n1 === null) {
             throw new Error(
                 `Expected a number at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
@@ -43,7 +72,7 @@ export class Parser {
             this.moveToNextToken();
 
             let n2: PowerFactorType = this.getNumber();
-            if (!n2) {
+            if (n2 === null) {
                 throw new Error(
                     `Expected a number at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
@@ -58,9 +87,10 @@ export class Parser {
         }
     }
 
-    public factor() {
+
+    public factor(): FactorType {
         let n1: FactorType = this.powerFactor();
-        if (!n1) {
+        if (n1 === null) {
             throw new Error(
                 `Expected a number at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
@@ -84,7 +114,7 @@ export class Parser {
             this.moveToNextToken();
 
             let n2: FactorType = this.powerFactor();
-            if (!n2) {
+            if (n2 === null) {
                 throw new Error(
                     `Expected a number at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
@@ -103,9 +133,9 @@ export class Parser {
         }
     }
 
-    public term() {
+    public term(): TermType {
         let n1: TermType = this.factor();
-        if (!n1) {
+        if (n1 === null) {
             throw new Error(
                 `Expected a number at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
@@ -130,8 +160,8 @@ export class Parser {
             }
             this.moveToNextToken();
 
-            let n2: boolean | MNumber | PlusNode | MinusNode | MultiplyNode | DotMultiplyNode | DivisionNode | DotDivisionNode = this.factor();
-            if (!n2) {
+            let n2: FactorType = this.factor();
+            if (n2 === null) {
                 throw new Error(
                     `Expected a number at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
@@ -196,7 +226,7 @@ export class Parser {
                 )
             );
         }
-        return false;
+        return null;
     }
 
     private getBinaryOperator() {
@@ -211,6 +241,6 @@ export class Parser {
         ) {
             return currentToken;
         }
-        return false;
+        return null;
     }
 }

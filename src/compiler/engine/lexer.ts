@@ -82,7 +82,16 @@ export class Lexer {
                     newPosition.add();
                     tokens.push(new Token(TokenType.DOT_POWER, ".^", newPosition));
                 }
-            } else {
+            } else if (currentChar === '(') {
+                this.currentIndex++;
+                newPosition.add();
+                tokens.push(new Token(TokenType.LEFT_PAREN, "(", newPosition));
+            } else if (currentChar === ')') {
+                this.currentIndex++;
+                newPosition.add();
+                tokens.push(new Token(TokenType.RIGHT_PAREN, ")", newPosition));
+            }
+            else {
                 this.currentIndex++;
             }
 

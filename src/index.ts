@@ -7,7 +7,7 @@ function print_obj(obj: any) {
 }
 
 
-let input = "2^0.5^2^3 + 1";
+let input = "2 + (4 .* 6)";
 
 
 let lexer = new Lexer(input);
@@ -18,6 +18,8 @@ let parser = new Parser(tokens);
 
 let executor = new Executor();
 let x = parser.term();
-
+if (x === null) {
+    throw new Error("There was an error in the statement.");
+}
 let result = executor.execute(x);
 result.print();

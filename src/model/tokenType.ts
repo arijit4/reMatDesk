@@ -15,6 +15,9 @@ export class TokenType {
 
     public static readonly EQUAL = "EQUAL";
 
+    public static readonly LEFT_PAREN = "LEFT_PAREN";
+    public static readonly RIGHT_PAREN = "RIGHT_PAREN";
+
     public static readonly NEWLINE = "NEWLINE";
     public static readonly EOF = "EOF";
 }
