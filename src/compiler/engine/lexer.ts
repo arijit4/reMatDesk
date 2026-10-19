@@ -2,6 +2,7 @@ import {Token} from "../../model/token";
 import {isAlpha, isAlphaNumeric, isDigit, isNewline, isOperator} from "../../utils/charTypeTester";
 import {Position} from "../../model/position";
 import {TokenType} from "../../model/tokenType";
+import {MError} from "../data_models/MError";
 
 export class Lexer {
     input: string;
@@ -12,7 +13,7 @@ export class Lexer {
         this.input = input;
     }
 
-    tokenize(): Token[] {
+    tokenize(): Token[] | MError {
         this.input = this.input.trim();
         const tokens: Token[] = [];
 
@@ -20,7 +21,9 @@ export class Lexer {
             let newPosition = new Position(this.currentLine, this.currentIndex);
             const currentChar = this.currentChar();
 
-            if (isDigit(currentChar)) {
+            if (currentChar === ' ') {
+                this.currentIndex++;
+            } else if (isDigit(currentChar)) {
                 let numToken = this.generateNumberToken();
                 this.currentIndex = numToken.position!.posEnd;
                 tokens.push(numToken);
@@ -63,12 +66,12 @@ export class Lexer {
                     // this.currentIndex++;
                     // newPosition.add();
                     // tokens.push(new Token(TokenType.DOT_PLUS, ".+", newPosition));
-                    throw new Error("dot plus operator is not a valid operator in matlab");
+                    return new MError("dot plus operator is not a valid operator in matlab");
                 } else if (nextChar === '-') {
                     // this.currentIndex++;
                     // newPosition.add();
                     // tokens.push(new Token(TokenType.DOT_MINUS, ".-", newPosition));
-                    throw new Error("dot minus operator is not a valid operator in matlab");
+                    return new MError("dot minus operator is not a valid operator in matlab");
                 } else if (nextChar === '*') {
                     this.currentIndex++;
                     newPosition.add();
@@ -90,11 +93,10 @@ export class Lexer {
                 this.currentIndex++;
                 newPosition.add();
                 tokens.push(new Token(TokenType.RIGHT_PAREN, ")", newPosition));
+            } else {
+                // this.currentIndex++;
+                return new MError(`Unexpected character '${currentChar}' at position ${this.currentLine}:${this.currentIndex}`);
             }
-            else {
-                this.currentIndex++;
-            }
-
         }
 
         tokens.push(

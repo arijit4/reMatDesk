@@ -8,6 +8,7 @@ import {PlusNode} from "../nodes/plus_node";
 import {MinusNode} from "../nodes/minus_node";
 import {DotPowerNode, PowerNode} from "../nodes/power_node";
 import {FactorType, PowerFactorType, TermType} from "../centralTypes";
+import {MError} from "../data_models/MError";
 
 export class Parser {
     public tokens: Token[];
@@ -28,15 +29,12 @@ export class Parser {
         if (this.currentToken().type === TokenType.LEFT_PAREN) {
             this.moveToNextToken();
             let n1: TermType = this.term();
-            if (n1 === null) {
-                throw new Error(
-                    `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-                );
+            if (n1 instanceof MError) {
+                return n1;
             }
             this.moveToNextToken();
             if (this.currentToken().type !== TokenType.RIGHT_PAREN) {
-                throw new Error(
+                return new MError(
                     `Expected a closing parenthesis at position 
                 ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
                 );
@@ -44,22 +42,16 @@ export class Parser {
             return n1;
         }
         let n: PowerFactorType = this.getNumber();
-        if (n === null) {
-            throw new Error(
-                `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-            );
+        if (n instanceof MError) {
+            return n;
         }
         return n;
     }
 
     public powerFactor(): PowerFactorType {
         let n1: TermType = this.parenthesisFactor()//this.getNumber();
-        if (n1 === null) {
-            throw new Error(
-                `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-            );
+        if (n1 instanceof MError) {
+            return n1;
         }
         while (true) {
             this.moveToNextToken();
@@ -72,11 +64,8 @@ export class Parser {
             this.moveToNextToken();
 
             let n2: PowerFactorType = this.getNumber();
-            if (n2 === null) {
-                throw new Error(
-                    `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-                );
+            if (n2 instanceof MError) {
+                return n2;
             }
 
             if (op.type === TokenType.POWER) {
@@ -90,11 +79,8 @@ export class Parser {
 
     public factor(): FactorType {
         let n1: FactorType = this.powerFactor();
-        if (n1 === null) {
-            throw new Error(
-                `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-            );
+        if (n1 instanceof MError) {
+            return n1;
         }
         while (true) {
             this.moveToNextToken();
@@ -114,11 +100,8 @@ export class Parser {
             this.moveToNextToken();
 
             let n2: FactorType = this.powerFactor();
-            if (n2 === null) {
-                throw new Error(
-                    `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-                );
+            if (n2 instanceof MError) {
+                return n2;
             }
 
             if (op.type === TokenType.MULTIPLY) {
@@ -135,11 +118,8 @@ export class Parser {
 
     public term(): TermType {
         let n1: TermType = this.factor();
-        if (n1 === null) {
-            throw new Error(
-                `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-            );
+        if (n1 instanceof MError) {
+            return n1;
         }
         while (true) {
             this.moveToNextToken();
@@ -161,13 +141,9 @@ export class Parser {
             this.moveToNextToken();
 
             let n2: FactorType = this.factor();
-            if (n2 === null) {
-                throw new Error(
-                    `Expected a number at position 
-                ${this.currentToken().position?.line}:${this.currentToken().position?.posStart}`
-                );
+            if (n2 instanceof MError) {
+                return n2;
             }
-
             if (op.type === TokenType.PLUS) {
                 n1 = new PlusNode(n1, n2);
             } else if (op.type === TokenType.MINUS) {
@@ -226,7 +202,10 @@ export class Parser {
                 )
             );
         }
-        return null;
+        return new MError(
+            "Expected a number",
+            currentToken.position
+        );
     }
 
     private getBinaryOperator() {

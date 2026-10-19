@@ -1,6 +1,7 @@
 import {MNumber} from "../data_models/MNumber";
 import {MAtom} from "../data_models/MAtom";
 import {ParserNode} from "../centralTypes";
+import {MError} from "../data_models/MError";
 
 export class MultiplyNode {
     left: ParserNode;
@@ -19,12 +20,6 @@ export class MultiplyNode {
             new MAtom(1)
         )
     }
-
-    print() {
-        this.left.print();
-        console.log("*");
-        this.right.print();
-    }
 }
 
 export class DotMultiplyNode {
@@ -39,15 +34,11 @@ export class DotMultiplyNode {
         this.right = right;
     }
 
-    execute() {
-        let l: MNumber = this.left instanceof MNumber ? this.left : this.left.execute();
-        let r: MNumber = this.right instanceof MNumber ? this.right : this.right.execute();
+    execute(): MNumber | MError {
+        let l = this.left instanceof MNumber ? this.left : this.left.execute();
+        if (l instanceof MError) { return l }
+        let r = this.right instanceof MNumber ? this.right : this.right.execute();
+        if (r instanceof MError) { return r }
         return l.dotMultiply(r);
-    }
-
-    print() {
-        this.left.print();
-        console.log(".*");
-        this.right.print();
     }
 }

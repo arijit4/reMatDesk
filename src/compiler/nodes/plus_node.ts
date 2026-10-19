@@ -1,5 +1,6 @@
 import {MNumber} from "../data_models/MNumber";
 import {ParserNode} from "../centralTypes";
+import {MError} from "../data_models/MError";
 
 export class PlusNode {
     left: ParserNode;
@@ -13,15 +14,11 @@ export class PlusNode {
         this.right = right;
     }
     
-    execute() {
-        let l: MNumber = this.left instanceof MNumber ? this.left : this.left.execute();
-        let r: MNumber = this.right instanceof MNumber ? this.right : this.right.execute();
+    execute(): MNumber | MError {
+        let l = this.left instanceof MNumber ? this.left : this.left.execute();
+        if (l instanceof MError) { return l }
+        let r = this.right instanceof MNumber ? this.right : this.right.execute();
+        if (r instanceof MError) { return r }
         return l.add(r);
-    }
-
-    print() {
-        this.left.print();
-        console.log("+");
-        this.right.print();
     }
 }

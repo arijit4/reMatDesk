@@ -1,4 +1,5 @@
 import {MAtom} from "./MAtom";
+import {MError} from "./MError";
 
 export class MNumber {
     public matrix: (MAtom)[][];
@@ -43,7 +44,7 @@ export class MNumber {
         }
     }
 
-    add(other: MNumber): MNumber {
+    add(other: MNumber): MNumber | MError {
         if (this.isScalar()) {
             let scalar = this.matrix[0][0];
             let result = new MNumber(null);
@@ -66,7 +67,10 @@ export class MNumber {
             return result;
         }
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
-            throw new Error("Matrix dimensions must match for addition.");
+            return new MError(
+                "Matrix dimensions must match for addition.",
+                null
+            );
         }
 
         let result = new MNumber(null);
@@ -78,9 +82,9 @@ export class MNumber {
         return result;
     }
 
-    subtract(other: MNumber): MNumber {
+    subtract(other: MNumber): MNumber | MError {
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
-            throw new Error("Matrix dimensions must match for subtraction.");
+           return new MError("Matrix dimensions must match for subtraction.", null);
         }
 
         let result = new MNumber(null);
@@ -92,9 +96,9 @@ export class MNumber {
         return result;
     }
 
-    dotMultiply(other: MNumber): MNumber {
+    dotMultiply(other: MNumber): MNumber | MError {
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
-            throw new Error("Matrix dimensions must match for dot multiplication.");
+            return new MError("Matrix dimensions must match for dot multiplication.", null);
         }
 
         let result = new MNumber(null);
@@ -106,9 +110,9 @@ export class MNumber {
         return result;
     }
 
-    dotDivide(other: MNumber): MNumber {
+    dotDivide(other: MNumber): MNumber | MError {
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
-            throw new Error("Matrix dimensions must match for dot division.");
+            return new MError("Matrix dimensions must match for dot division.", null);
         }
 
         let result = new MNumber(null);
@@ -120,9 +124,9 @@ export class MNumber {
         return result;
     }
 
-    dotToThePowerOf(other: MNumber): MNumber {
+    dotToThePowerOf(other: MNumber): MNumber | MError {
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
-            throw new Error("Matrix dimensions must match for dot power.");
+            return new MError("Matrix dimensions must match for dot power.", null);
         }
 
         let result = new MNumber(null);
@@ -134,7 +138,7 @@ export class MNumber {
         return result;
     }
 
-    scalarPower(other: MNumber): MNumber {
+    scalarPower(other: MNumber): MNumber | MError {
         let result = new MNumber(null);
 
         if (this.isScalar()) {
@@ -157,7 +161,7 @@ export class MNumber {
         return result;
     }
 
-    execute() {
+    execute(): MNumber {
         return this;
     }
 

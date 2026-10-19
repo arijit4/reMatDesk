@@ -4,9 +4,11 @@ import {MinusNode} from "./nodes/minus_node";
 import {DotMultiplyNode, MultiplyNode} from "./nodes/multiply_node";
 import {DivisionNode, DotDivisionNode} from "./nodes/division_node";
 import {DotPowerNode, PowerNode} from "./nodes/power_node";
+import {MError} from "./data_models/MError";
 
 export type ParserNode =
     MNumber
+    | MError
     | PowerNode
     | PlusNode
     | MinusNode
@@ -17,13 +19,13 @@ export type ParserNode =
     | DotDivisionNode;
 
 export type PowerFactorType =
-    null
+    MError
     | MNumber
     | PowerNode
     | DotPowerNode
 
 export type FactorType =
-    null
+    MError
     | MNumber
     | PowerNode
     | MultiplyNode
@@ -33,7 +35,7 @@ export type FactorType =
     | DotDivisionNode;
 
 export type TermType =
-    null
+    MError
     | MNumber
     | PowerNode
     | PlusNode
