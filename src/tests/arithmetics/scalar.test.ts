@@ -1,6 +1,6 @@
-import {Executor} from "../compiler/engine/executor";
-import {Parser} from "../compiler/engine/parser";
-import {Lexer} from "../compiler/engine/lexer";
+import {Executor} from "../../compiler/engine/executor";
+import {Parser} from "../../compiler/engine/parser";
+import {Lexer} from "../../compiler/engine/lexer";
 
 function getResult(input: string) {
     let lexer = new Lexer(input);
@@ -18,7 +18,7 @@ function round(num: number, place: number = 8) {
 }
 
 describe('Scalar arithmetics', () => {
-    let executor = new Executor();
+    // addition
     test('adds 3 numbers correctly', () => {
         let result = getResult("2 + 3 + 4");
         expect(result.matrix[0][0].real).toBe(2 + 3 + 4);
@@ -29,6 +29,7 @@ describe('Scalar arithmetics', () => {
         expect(result.matrix[0][0].real).toBe(0);
         expect(result.matrix[0][0].imaginary).toBe(2 + 3 + 4);
     });
+    // subtraction
     test('subtracts 3 numbers correctly', () => {
         let result = getResult("2 - 3 - 4");
         expect(result.matrix[0][0].real).toBe(2 - 3 - 4);
@@ -39,6 +40,7 @@ describe('Scalar arithmetics', () => {
         expect(result.matrix[0][0].real).toBe(0);
         expect(result.matrix[0][0].imaginary).toBe(2 - 3 - 4);
     });
+    // multiplication
     test('multiplies 3 scalar numbers correctly', () => {
         let result = getResult("2 .* 3 .* 4");
         expect(result.matrix[0][0].real).toBe(2 * 3 * 4);
@@ -54,6 +56,7 @@ describe('Scalar arithmetics', () => {
         expect(result.matrix[0][0].real).toBe(2 + (4 * 6));
         expect(result.matrix[0][0].imaginary).toBe(0);
     });
+    // division
     test('divides 3 scalar numbers correctly', () => {
         let result = getResult("2 ./ 3 ./ 4");
         expect(result.matrix[0][0].real).toBe(2 / 3 / 4);
@@ -69,6 +72,7 @@ describe('Scalar arithmetics', () => {
         expect(result.matrix[0][0].real).toBe(2 / (4 / 6));
         expect(result.matrix[0][0].imaginary).toBe(0);
     });
+    // exponentiation
     test('powers 3 scalar numbers correctly', () => {
         let result = getResult("2 ^ 0.5 ^ 2 ^ 3");
         expect(result.matrix[0][0].real).toBe(((2 ** 0.5) ** 2) ** 3);

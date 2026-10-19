@@ -14,7 +14,8 @@ purely written in TypeScript, it can also be made to run in the browser as well.
 
 ### Current features
 
-- Basic arithmetic operations
-- Power operations
-- Parentheses
-- Imaginary numbers
+- Arithmetic operations
+  - Operator precedence
+  - Parentheses
+  - Exponentiation
+  - Complex numbers
