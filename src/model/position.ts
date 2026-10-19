@@ -9,7 +9,7 @@ export class Position {
         this.posEnd = start;
     }
 
-    add() {
+    addToPosition() {
         this.posEnd++;
     }
 }

@@ -29,22 +29,22 @@ export class Lexer {
                 tokens.push(numToken);
             } else if (currentChar === 'i') {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
                 tokens.push(new Token(TokenType.I_NUMBER, "1", newPosition));
             } else if (isAlpha(currentChar) || currentChar === '_') {
                 tokens.push(this.generateIdentifierToken());
             } else if (isNewline(currentChar)) {
                 this.currentIndex++
-                newPosition.add();
+                newPosition.addToPosition();
                 tokens.push(new Token(TokenType.NEWLINE, "\n", newPosition));
                 this.currentLine++;
             } else if (currentChar === "=") {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
                 tokens.push(new Token(TokenType.EQUAL, "=", newPosition));
             } else if (isOperator(currentChar)) {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
 
                 let type = TokenType.PLUS;
                 if (currentChar === '-') {
@@ -59,7 +59,7 @@ export class Lexer {
                 tokens.push(new Token(type, currentChar, newPosition));
             } else if (currentChar === '.') {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
 
                 let nextChar = this.currentChar();
                 if (nextChar === '+') {
@@ -74,24 +74,24 @@ export class Lexer {
                     return new MError("dot minus operator is not a valid operator in matlab");
                 } else if (nextChar === '*') {
                     this.currentIndex++;
-                    newPosition.add();
+                    newPosition.addToPosition();
                     tokens.push(new Token(TokenType.DOT_MULTIPLY, ".*", newPosition));
                 } else if (nextChar === '/') {
                     this.currentIndex++;
-                    newPosition.add();
+                    newPosition.addToPosition();
                     tokens.push(new Token(TokenType.DOT_DIVIDE, "./", newPosition));
                 } else if (nextChar === '^') {
                     this.currentIndex++;
-                    newPosition.add();
+                    newPosition.addToPosition();
                     tokens.push(new Token(TokenType.DOT_POWER, ".^", newPosition));
                 }
             } else if (currentChar === '(') {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
                 tokens.push(new Token(TokenType.LEFT_PAREN, "(", newPosition));
             } else if (currentChar === ')') {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
                 tokens.push(new Token(TokenType.RIGHT_PAREN, ")", newPosition));
             } else {
                 // this.currentIndex++;
@@ -119,7 +119,7 @@ export class Lexer {
         while (this.indexInRange() && (isDigit(this.currentChar()) || this.currentChar() === '.' || this.currentChar() === 'i')) {
             if (this.currentChar() === 'i') {
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
                 return new Token(
                     TokenType.I_NUMBER,
                     num,
@@ -134,7 +134,7 @@ export class Lexer {
 
                         num += this.currentChar();
                         this.currentIndex++;
-                        newPosition.add();
+                        newPosition.addToPosition();
                     } else {
                         break;
                     }
@@ -142,7 +142,7 @@ export class Lexer {
             } else {
                 num += this.currentChar();
                 this.currentIndex++;
-                newPosition.add();
+                newPosition.addToPosition();
             }
         }
         return new Token(
@@ -159,7 +159,7 @@ export class Lexer {
         while (isAlphaNumeric(this.currentChar()) || this.currentChar() === '_') {
             id += this.currentChar();
             this.currentIndex++;
-            newPosition.add();
+            newPosition.addToPosition();
         }
         return new Token(
             TokenType.IDENTIFIER,
