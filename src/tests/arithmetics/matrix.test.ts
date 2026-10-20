@@ -245,4 +245,85 @@ describe('Matrix arithmetics', () => {
             expect(result.matrix[1][1].imaginary).toBe(0);
         }
     });
+    test('matrix elementwise multiplication', () => {
+        let result = getResult("[2 3; 4 5] .* [2 3; 4 5]");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(2);
+            expect(result.dimensions.column).toBe(2);
+
+            expect(result.matrix[0][0].real).toBe(4);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(9);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[1][0].real).toBe(16);
+            expect(result.matrix[1][0].imaginary).toBe(0);
+
+            expect(result.matrix[1][1].real).toBe(25);
+            expect(result.matrix[1][1].imaginary).toBe(0);
+        }
+    });
+    // power
+    test('power [scalar ^ matrix]', () => {
+        let result = getResult("2 ^ [2 3; 4 5]");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(2);
+            expect(result.dimensions.column).toBe(2);
+
+            expect(result.matrix[0][0].real).toBe(4);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(8);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[1][0].real).toBe(16);
+            expect(result.matrix[1][0].imaginary).toBe(0);
+
+            expect(result.matrix[1][1].real).toBe(32);
+            expect(result.matrix[1][1].imaginary).toBe(0);
+        }
+    });
+    test('power [matrix ^ scalar]', () => {
+        let result = getResult("[2 3; 4 5] ^ 2");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(2);
+            expect(result.dimensions.column).toBe(2);
+
+            expect(result.matrix[0][0].real).toBe(4);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(9);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[1][0].real).toBe(16);
+            expect(result.matrix[1][0].imaginary).toBe(0);
+
+            expect(result.matrix[1][1].real).toBe(25);
+            expect(result.matrix[1][1].imaginary).toBe(0);
+        }
+    });
+    test('power [matrix .^ matrix]', () => {
+        let result = getResult("[2 3; 4 5] .^ [2 2; 2 2]");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(2);
+            expect(result.dimensions.column).toBe(2);
+
+            expect(result.matrix[0][0].real).toBe(4);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(9);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[1][0].real).toBe(16);
+            expect(result.matrix[1][0].imaginary).toBe(0);
+
+            expect(result.matrix[1][1].real).toBe(25);
+            expect(result.matrix[1][1].imaginary).toBe(0);
+        }
+    });
 });

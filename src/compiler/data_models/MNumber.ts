@@ -201,6 +201,7 @@ export class MNumber {
 
         let result = new MNumber(null);
         for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
             for (let j = 0; j < this.dimensions.column; j++) {
                 result.push(this.matrix[i][j].toThePowerOf(other.matrix[i][j]));
             }
