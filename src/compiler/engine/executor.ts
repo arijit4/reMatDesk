@@ -6,6 +6,7 @@ export class Executor {
         if (node instanceof MError) {
             return node;
         }
-        return node.execute();
+        let mini_executor = new Executor();
+        return node.execute(mini_executor);
     }
 }

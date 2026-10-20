@@ -21,4 +21,5 @@ purely written in TypeScript, it can also be made to run in the browser as well.
   - Parentheses
   - Exponentiation
   - Complex numbers
+  - Matrix
 - Error messages

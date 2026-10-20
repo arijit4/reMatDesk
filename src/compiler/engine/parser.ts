@@ -9,6 +9,7 @@ import {MinusNode} from "../nodes/minus_node";
 import {DotPowerNode, PowerNode} from "../nodes/power_node";
 import {FactorType, PowerFactorType, TermType} from "../centralTypes";
 import {MError} from "../data_models/MError";
+import {MNumberBuilder} from "../data_models/MNumberBuilder";
 
 export class Parser {
     public tokens: Token[];
@@ -49,7 +50,7 @@ export class Parser {
     }
 
     public powerFactor(): PowerFactorType {
-        let n1: TermType = this.parenthesisFactor()//this.getNumber();
+        let n1: TermType = this.parenthesisFactor();
         if (n1 instanceof MError) {
             return n1;
         }
@@ -63,7 +64,7 @@ export class Parser {
             let op = this.currentToken();
             this.moveToNextToken();
 
-            let n2: PowerFactorType = this.getNumber();
+            let n2: PowerFactorType = this.parenthesisFactor();
             if (n2 instanceof MError) {
                 return n2;
             }
@@ -173,7 +174,44 @@ export class Parser {
     }
 
     // ============ Private Methods ============
+    private getMatrix() {
+        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
+            let n = new MNumberBuilder();
+            this.moveToNextToken();
+            while (this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN
+            && this.currentToken().type !== TokenType.EOF) {
+                if (this.currentToken().type === TokenType.COMMA) {
+                    this.moveToNextToken();
+                }
+                let a = this.term();
+                if (a instanceof MError) {
+                    return a;
+                }
+                n.push(a);
+                this.moveToNextToken()
+                if (this.currentToken().type === TokenType.SEMICOLON) {
+                    n.addRow();
+                    this.moveToNextToken();
+                }
+            }
+            if (this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN) {
+                return new MError(
+                    "Expected a closing square parenthesis",
+                    this.currentToken().position
+                );
+            }
+            return n;
+        }
+        return new MError(
+            "Expected a matrix",
+            this.currentToken().position
+        );
+    }
+
     private getNumber() {
+        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
+            return this.getMatrix();
+        }
         let sign = 1;
 
         while (this.currentToken().type === TokenType.PLUS || this.currentToken().type === TokenType.MINUS) {

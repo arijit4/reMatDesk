@@ -12,7 +12,7 @@ export class MError {
         this.position = position;
     }
 
-    public toString(): string {
+    public stringify(): string {
         if (this.position) {
             return `${this.message}
             Error at line ${this.position.line}, column ${this.position.posStart}: ${this.message}`;

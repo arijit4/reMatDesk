@@ -1,6 +1,7 @@
 import {ParserNode} from "../centralTypes";
 import {MNumber} from "../data_models/MNumber";
 import {MError} from "../data_models/MError";
+import {Executor} from "../engine/executor";
 
 export class PowerNode {
     left: ParserNode;
@@ -14,12 +15,12 @@ export class PowerNode {
         this.right = right;
     }
 
-    execute(): MNumber | MError {
-        let l = this.left instanceof MNumber ? this.left : this.left.execute();
+    execute(e: Executor): MNumber | MError {
+        let l = this.left instanceof MNumber ? this.left : this.left.execute(e);
         if (l instanceof MError) {
             return l
         }
-        let r = this.right instanceof MNumber ? this.right : this.right.execute();
+        let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
         if (r instanceof MError) {
             return r
         }
@@ -46,12 +47,12 @@ export class DotPowerNode {
         this.right = right;
     }
 
-    execute(): MNumber | MError {
-        let l = this.left instanceof MNumber ? this.left : this.left.execute();
+    execute(e: Executor): MNumber | MError {
+        let l = this.left instanceof MNumber ? this.left : this.left.execute(e);
         if (l instanceof MError) {
             return l
         }
-        let r = this.right instanceof MNumber ? this.right : this.right.execute();
+        let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
         if (r instanceof MError) {
             return r
         }

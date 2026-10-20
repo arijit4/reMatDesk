@@ -1,5 +1,6 @@
 import {MAtom} from "./MAtom";
 import {MError} from "./MError";
+import {Executor} from "../engine/executor";
 
 export class MNumber {
     public matrix: (MAtom)[][];
@@ -30,17 +31,20 @@ export class MNumber {
         }
 
         this.matrix[this.dimensions.row - 1].push(value);
-        this.dimensions.column = Math.max(
-            this.dimensions.column,
-            this.matrix[this.dimensions.row - 1].length
-        );
+        if (this.dimensions.row === 1) {
+            this.dimensions.column = this.matrix[0].length;
+        } else {
+            this.dimensions.column = this.matrix[this.dimensions.row - 1].length
+        }
     }
 
     print() {
         for (let i = 0; i < this.dimensions.row; i++) {
             let row = this.matrix[i];
-            let rowString = row.map(atom => `${atom.real}${atom.imaginary !== 0 ? ` + ${atom.imaginary === 1 ? '' : atom.imaginary}i` : ''}`).join(', ');
-            console.log(`[${rowString}]`);
+            let rowString = row.map(
+                atom => `${atom.real}${atom.imaginary !== 0 ? ` + ${atom.imaginary === 1 ? '' : atom.imaginary}i` : ''}`
+            ).join('\t');
+            console.log(`\t${rowString}`);
         }
     }
 
@@ -75,6 +79,7 @@ export class MNumber {
 
         let result = new MNumber(null);
         for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
             for (let j = 0; j < this.dimensions.column; j++) {
                 result.push(this.matrix[i][j].add(other.matrix[i][j]));
             }
@@ -83,17 +88,81 @@ export class MNumber {
     }
 
     subtract(other: MNumber): MNumber | MError {
+        if (this.isScalar()) {
+            let scalar = this.matrix[0][0];
+            let result = new MNumber(null);
+            for (let i = 0; i < other.dimensions.row; i++) {
+                result.addRow();
+                for (let j = 0; j < other.dimensions.column; j++) {
+                    result.push(scalar.subtract(other.matrix[i][j]));
+                }
+            }
+            return result;
+        } else if (other.isScalar()) {
+            let scalar = other.matrix[0][0];
+            let result = new MNumber(null);
+            for (let i = 0; i < this.dimensions.row; i++) {
+                result.addRow();
+                for (let j = 0; j < this.dimensions.column; j++) {
+                    let tmp = this.matrix[i][j];
+                    result.push(tmp.subtract(scalar));
+                }
+            }
+            return result;
+        }
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
            return new MError("Matrix dimensions must match for subtraction.", null);
         }
 
         let result = new MNumber(null);
         for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
             for (let j = 0; j < this.dimensions.column; j++) {
                 result.push(this.matrix[i][j].subtract(other.matrix[i][j]));
             }
         }
         return result;
+    }
+
+    multiply(other: MNumber): MNumber | MError {
+        if (this.isScalar()) {
+            let scalar = this.matrix[0][0];
+            let result = new MNumber(null);
+            for (let i = 0; i < other.dimensions.row; i++) {
+                result.addRow();
+                for (let j = 0; j < other.dimensions.column; j++) {
+                    result.push(scalar.multiply(other.matrix[i][j]));
+                }
+            }
+            return result;
+        } else if (other.isScalar()) {
+            let scalar = other.matrix[0][0];
+            let result = new MNumber(null);
+            for (let i = 0; i < this.dimensions.row; i++) {
+                result.addRow();
+                for (let j = 0; j < this.dimensions.column; j++) {
+                    result.push(scalar.multiply(this.matrix[i][j]));
+                }
+            }
+            return result;
+        } else {
+            if (this.dimensions.column !== other.dimensions.row) {
+                return new MError("Matrix dimensions must match for multiplication.", null);
+            }
+
+            let result = new MNumber(null);
+            for (let i = 0; i < this.dimensions.row; i++) {
+                result.addRow();
+                for (let j = 0; j < other.dimensions.column; j++) {
+                    let sum = new MAtom(0, 0, null, false);
+                    for (let k = 0; k < this.dimensions.column; k++) {
+                        sum = sum.add(this.matrix[i][k].multiply(other.matrix[k][j]));
+                    }
+                    result.push(sum);
+                }
+            }
+            return result;
+        }
     }
 
     dotMultiply(other: MNumber): MNumber | MError {
@@ -103,6 +172,7 @@ export class MNumber {
 
         let result = new MNumber(null);
         for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
             for (let j = 0; j < this.dimensions.column; j++) {
                 result.push(this.matrix[i][j].multiply(other.matrix[i][j]));
             }
@@ -161,11 +231,26 @@ export class MNumber {
         return result;
     }
 
-    execute(): MNumber {
+    execute(_: Executor): MNumber {
         return this;
     }
 
     isScalar() {
         return this.dimensions.row === 1 && this.dimensions.column === 1;
+    }
+
+    validate() {
+        // clean up empty rows
+        this.matrix = this.matrix.filter(row => row.length > 0);
+        this.dimensions.row = this.matrix.length;
+        this.dimensions.column = this.matrix.length > 0 ? this.matrix[0].length : 0;
+
+        // check if all rows have the same number of columns
+        for (let i = 0; i < this.dimensions.row; i++) {
+            if (this.matrix[i].length !== this.dimensions.column) {
+                return new MError("Inconsistent matrix dimensions");
+            }
+        }
+        return this;
     }
 }

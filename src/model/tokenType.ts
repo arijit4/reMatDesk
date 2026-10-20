@@ -14,9 +14,13 @@ export class TokenType {
     public static readonly DOT_POWER = "DOT_POWER";
 
     public static readonly EQUAL = "EQUAL";
+    public static readonly SEMICOLON = "SEMICOLON";
+    public static readonly COMMA = "COMMA";
 
     public static readonly LEFT_PAREN = "LEFT_PAREN";
     public static readonly RIGHT_PAREN = "RIGHT_PAREN";
+    public static readonly LEFT_SQUARE_PAREN= "LEFT_SQUARE_PAREN";
+    public static readonly RIGHT_SQUARE_PAREN = "RIGHT_SQUARE_PAREN";
 
     public static readonly NEWLINE = "NEWLINE";
     public static readonly EOF = "EOF";

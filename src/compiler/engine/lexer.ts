@@ -23,6 +23,14 @@ export class Lexer {
 
             if (currentChar === ' ') {
                 this.currentIndex++;
+            } else if (currentChar === ';') {
+                this.currentIndex++;
+                newPosition.addToPosition();
+                tokens.push(new Token(TokenType.SEMICOLON, ";", newPosition));
+            } else if (currentChar === ',') {
+                this.currentIndex++;
+                newPosition.addToPosition();
+                tokens.push(new Token(TokenType.COMMA, ",", newPosition));
             } else if (isDigit(currentChar)) {
                 let numToken = this.generateNumberToken();
                 this.currentIndex = numToken.position!.posEnd;
@@ -63,14 +71,8 @@ export class Lexer {
 
                 let nextChar = this.currentChar();
                 if (nextChar === '+') {
-                    // this.currentIndex++;
-                    // newPosition.add();
-                    // tokens.push(new Token(TokenType.DOT_PLUS, ".+", newPosition));
                     return new MError("dot plus operator is not a valid operator in matlab");
                 } else if (nextChar === '-') {
-                    // this.currentIndex++;
-                    // newPosition.add();
-                    // tokens.push(new Token(TokenType.DOT_MINUS, ".-", newPosition));
                     return new MError("dot minus operator is not a valid operator in matlab");
                 } else if (nextChar === '*') {
                     this.currentIndex++;
@@ -93,8 +95,15 @@ export class Lexer {
                 this.currentIndex++;
                 newPosition.addToPosition();
                 tokens.push(new Token(TokenType.RIGHT_PAREN, ")", newPosition));
+            } else if (currentChar === '[') {
+                this.currentIndex++;
+                newPosition.addToPosition();
+                tokens.push(new Token(TokenType.LEFT_SQUARE_PAREN, "[", newPosition));
+            } else if (currentChar === ']') {
+                this.currentIndex++;
+                newPosition.addToPosition();
+                tokens.push(new Token(TokenType.RIGHT_SQUARE_PAREN, "]", newPosition));
             } else {
-                // this.currentIndex++;
                 return new MError(`Unexpected character '${currentChar}' at position ${this.currentLine}:${this.currentIndex}`);
             }
         }

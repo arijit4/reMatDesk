@@ -59,7 +59,7 @@ describe('Scalar arithmetics', () => {
     });
     // multiplication
     test('multiplies 3 scalar numbers correctly', () => {
-        let result = getResult("2 .* 3 .* 4");
+        let result = getResult("2 * 3 * 4");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 * 3 * 4);
@@ -67,7 +67,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('multiplies 3 imaginary numbers correctly', () => {
-        let result = getResult("2i .* 3i .* 4i");
+        let result = getResult("2i * 3i * 4i");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -75,7 +75,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('multiplication with parenthesis', () => {
-        let result = getResult("2 + (4 .* 6)");
+        let result = getResult("2 + (4 * 6)");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 + (4 * 6));
