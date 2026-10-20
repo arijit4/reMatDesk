@@ -19,7 +19,7 @@ purely written in TypeScript, it can also be made to run in the browser as well.
 - Arithmetic operations
   - Operator precedence
   - Parentheses
-  - Exponentiation
+  - Exponentiation (in MatLab way)
   - Complex numbers
   - Matrix
 - Error messages
