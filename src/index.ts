@@ -4,8 +4,8 @@ import {Executor} from "./compiler/engine/executor";
 import {MError} from "./compiler/data_models/MError";
 import {MNumberBuilder} from "./compiler/data_models/MNumberBuilder";
 
-let input = "[2+2i 3; 4 5] .* [2 3; 4 5]";
-
+let input = "2^2^2 * 3^3^3 +( 207 + (40000+ (2*100000 + 10^7*4) + 4*10^8 + 87799*10^10) + 1)";
+// let input = "2^2^2*0 + 27^3 ";
 
 let lexer = new Lexer(input);
 
@@ -20,7 +20,7 @@ if (tokens instanceof MError) {
 
     let executor = new Executor();
 
-    let x = parser.term();
+    let x = parser.term(false);
     // console.log(JSON.stringify(x, null, 2));
     let result = executor.execute(x);
     if (result instanceof MError) {

@@ -11,7 +11,7 @@ function getResult(input: string) {
         return tokens;
     }
     let parser = new Parser(tokens);
-    let x = parser.term();
+    let x = parser.term(false);
 
     let executor = new Executor();
     return executor.execute(x!);
@@ -84,7 +84,7 @@ describe('Scalar arithmetics', () => {
     });
     // division
     test('divides 3 scalar numbers correctly', () => {
-        let result = getResult("2 ./ 3 ./ 4");
+        let result = getResult("2 / 3 / 4");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 / 3 / 4);
@@ -92,7 +92,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('divides 3 imaginary numbers correctly', () => {
-        let result = getResult("2i ./ 3i ./ 4i");
+        let result = getResult("2i / 3i / 4i");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -100,14 +100,14 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('division with parenthesis', () => {
-        let result = getResult("2 ./ (4 ./ 6)");
+        let result = getResult("2/ (4 / 6)");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 / (4 / 6));
             expect(result.matrix[0][0].imaginary).toBe(0);
         }
     });
-    // exponentiation
+    // power
     test('powers 3 scalar numbers correctly', () => {
         let result = getResult("2 ^ 0.5 ^ 2 ^ 3");
         expect(result).toBeInstanceOf(MNumber);
@@ -122,6 +122,16 @@ describe('Scalar arithmetics', () => {
         if (result instanceof MNumber) {
             expect(round(result.matrix[0][0].real)).toBe(round(0));
             expect(round(result.matrix[0][0].imaginary)).toBe(round(0.125));
+        }
+    });
+
+    // complex expression
+    test('complex expression', () => {
+        let result = getResult("2^2^2 * 3^3^3 +( 207 + (40000+ (2*100000 + 10^7*4) + 4*10^8 + 87799*10^10) + 1)");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBe(877990440555136);
+            expect(result.matrix[0][0].imaginary).toBe(0);
         }
     });
 });

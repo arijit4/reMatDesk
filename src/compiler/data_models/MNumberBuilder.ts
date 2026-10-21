@@ -48,7 +48,7 @@ export class MNumberBuilder {
             for (let j = 0; j < this.dimensions.column; j++) {
                 let term = this.matrix[i][j];
                 if (term === undefined) { // i dont know why this is undefined, but it happens when the matrix is malformed, like [1 2; 3]
-                    return new MError("Malformed matrix");
+                    return new MError("Malformed matrix; term is undefined");
                 } else if (term instanceof MError) {
                     return term;
                 } else if (term instanceof MNumber) {

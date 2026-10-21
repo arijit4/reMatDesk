@@ -22,11 +22,16 @@ export class Lexer {
             const currentChar = this.currentChar();
 
             if (currentChar === ' ') {
-                this.currentIndex++;
+                // this.currentIndex++;
+                tokens.push(this.generateSpaceToken());
             } else if (currentChar === ';') {
                 this.currentIndex++;
                 newPosition.addToPosition();
                 tokens.push(new Token(TokenType.SEMICOLON, ";", newPosition));
+            } else if (currentChar === ':') {
+                this.currentIndex++;
+                newPosition.addToPosition();
+                tokens.push(new Token(TokenType.COLON, ":", newPosition));
             } else if (currentChar === ',') {
                 this.currentIndex++;
                 newPosition.addToPosition();
@@ -161,6 +166,19 @@ export class Lexer {
         );
     }
 
+    generateSpaceToken(): Token {
+        let newPosition = new Position(this.currentLine, this.currentIndex);
+
+        while (this.currentChar() === ' ') {
+            this.currentIndex++;
+            newPosition.addToPosition();
+        }
+        return new Token(
+            TokenType.SPACE,
+            " ",
+            newPosition
+        );
+    }
     generateIdentifierToken(): Token {
         let id = "";
         let newPosition = new Position(this.currentLine, this.currentIndex);

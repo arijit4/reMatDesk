@@ -165,6 +165,22 @@ export class MNumber {
         }
     }
 
+    divide(other: MNumber): MNumber | MError {
+        if (other.isScalar()) {
+            let scalar = other.matrix[0][0];
+            let result = new MNumber(null);
+            for (let i = 0; i < this.dimensions.row; i++) {
+                result.addRow();
+                for (let j = 0; j < this.dimensions.column; j++) {
+                    result.push(this.matrix[i][j].divide(scalar));
+                }
+            }
+            return result;
+        }
+        // TODO: Implement matrix division (e.g., using matrix inversion or other methods)
+        return new MError("matrix/matrix is not implemented yet", null);
+    }
+
     dotMultiply(other: MNumber): MNumber | MError {
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
             return new MError("Matrix dimensions must match for dot multiplication.", null);
@@ -187,6 +203,7 @@ export class MNumber {
 
         let result = new MNumber(null);
         for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
             for (let j = 0; j < this.dimensions.column; j++) {
                 result.push(this.matrix[i][j].divide(other.matrix[i][j]));
             }

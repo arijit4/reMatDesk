@@ -15,6 +15,7 @@ export class TokenType {
 
     public static readonly EQUAL = "EQUAL";
     public static readonly SEMICOLON = "SEMICOLON";
+    public static readonly COLON = "COLON";
     public static readonly COMMA = "COMMA";
 
     public static readonly LEFT_PAREN = "LEFT_PAREN";
@@ -23,5 +24,6 @@ export class TokenType {
     public static readonly RIGHT_SQUARE_PAREN = "RIGHT_SQUARE_PAREN";
 
     public static readonly NEWLINE = "NEWLINE";
+    public static readonly SPACE = "SPACE";
     public static readonly EOF = "EOF";
 }

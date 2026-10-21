@@ -10,7 +10,7 @@ function getResult(input: string) {
         return tokens;
     }
     let parser = new Parser(tokens);
-    let x = parser.term();
+    let x = parser.term(false);
 
     let executor = new Executor();
     return executor.execute(x!);
@@ -29,23 +29,4 @@ describe('Scalar arithmetics errors', () => {
         let result = getResult("4 @ 5");
         expect(result).toBeInstanceOf(MError);
     });
-    test('matrix build without comma', () => {
-        let result = getResult("[1+3i -3.123; 4+2 5]");
-        expect(result).toBeInstanceOf(MError);
-        /*
-        * in my compiler, the first row is
-        * read as (1 + 3i - 3.123)
-        * making it only 1 integer. so the matrix becomes:
-        * [-2.123 + 3i]
-        * [     6      5]
-        * which is not a valid matrix, so it should return an error
-        *
-        * but in the MatLab, the first row is read as (1 + 3i) and (-3.123)
-        * so, this here is a limitation of my compiler.
-        *
-        * This can be fixed by lexing SPACES and using ignoreSpace() in the parser
-        * when needed.
-        */
-    });
-
 });

@@ -1,5 +1,4 @@
 import {MNumber} from "../data_models/MNumber";
-import {MAtom} from "../data_models/MAtom";
 import {ParserNode} from "../centralTypes";
 import {MError} from "../data_models/MError";
 import {Executor} from "../engine/executor";
@@ -16,10 +15,12 @@ export class DivisionNode {
         this.right = right;
     }
 
-    execute(_: Executor) {
-        return new MNumber(
-            new MAtom(1)
-        )
+    execute(e: Executor): MNumber | MError {
+        let l = this.left instanceof MNumber ? this.left : this.left.execute(e);
+        if (l instanceof MError) { return l }
+        let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
+        if (r instanceof MError) { return r }
+        return l.divide(r);
     }
 }
 
