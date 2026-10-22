@@ -12,12 +12,29 @@ export class MError {
         this.position = position;
     }
 
-    public stringify(): string {
-        if (this.position) {
-            return `${this.message}
+    public stringify(input: string | null = null): string {
+        if (input === null) {
+            if (this.position) {
+                return `${this.message}
             Error at line ${this.position.line}, column ${this.position.posStart}: ${this.message}`;
+            } else {
+                return `Error: ${this.message}`;
+            }
         } else {
-            return `Error: ${this.message}`;
+            if (this.position) {
+                let lines = input.split("\n");
+                let errorLine = lines[this.position.line - 1];
+                let pointerLine = " ".repeat(this.position.posStart)
+                    + "^".repeat(
+                        this.position.posEnd - this.position.posStart === 0 ?
+                            1 : this.position.posEnd - this.position.posStart
+                    );
+                return `Error at line ${this.position.line}, column ${this.position.posStart}: ${this.message}
+            ${errorLine}
+            ${pointerLine}`;
+            } else {
+                return `Error: ${this.message}`;
+            }
         }
     }
 

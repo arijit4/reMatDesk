@@ -33,4 +33,16 @@ describe('Scalar arithmetics errors', () => {
         let result = getResult("[2, 3");
         expect(result).toBeInstanceOf(MError);
     });
+    test('more than 2 colons', () => {
+        let result = getResult("2:4:10:15");
+        expect(result).toBeInstanceOf(MError);
+    });
+    test('incomplete range [a:]', () => {
+        let result = getResult("2:");
+        expect(result).toBeInstanceOf(MError);
+    });
+    test('incomplete range [a:b:]', () => {
+        let result = getResult("2:4:");
+        expect(result).toBeInstanceOf(MError);
+    });
 });

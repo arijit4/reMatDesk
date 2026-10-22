@@ -10,6 +10,7 @@ import {DotPowerNode, PowerNode} from "../nodes/power_node";
 import {FactorType, PowerFactorType, TermType} from "../centralTypes";
 import {MError} from "../data_models/MError";
 import {MNumberBuilder} from "../data_models/MNumberBuilder";
+import {MatrixRangeNode} from "../nodes/matrix_range_node";
 
 export class Parser {
     public tokens: Token[];
@@ -259,7 +260,7 @@ export class Parser {
         );
     }
 
-    private getNumber() {
+    private getNumber(): FactorType {
         if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
             return this.getMatrix();
         }
@@ -280,8 +281,9 @@ export class Parser {
             this.moveToNextToken();
             this.ignoreSpaces();
         }
+        let n: FactorType;
         if (this.currentToken().type === TokenType.NUMBER) {
-            return new MNumber(
+            n = new MNumber(
                 new MAtom(
                     sign.matrix[0][0].real * parseFloat(this.currentToken().value),
                     0,
@@ -289,7 +291,7 @@ export class Parser {
                 )
             );
         } else if (this.currentToken().type === TokenType.I_NUMBER) {
-            return new MNumber(
+            n = new MNumber(
                 new MAtom(
                     0,
                     sign.matrix[0][0].real * parseFloat(this.currentToken().value),
@@ -297,7 +299,7 @@ export class Parser {
                 )
             );
         } else if (this.currentToken().type !== TokenType.EOF) {
-            return new MultiplyNode(
+            n = new MultiplyNode(
                 this.term(false),
                 sign
             )
@@ -307,6 +309,56 @@ export class Parser {
                 this.currentToken().position
             );
         }
+        let lastValidIndex = this.currentIndex;
+        this.moveToNextToken();
+        this.ignoreSpaces();
+        if (this.currentToken().type !== TokenType.COLON) {
+            this.currentIndex = lastValidIndex;
+            return n;
+        }
+
+        while (this.currentToken().type === TokenType.COLON) {
+            console.log(n)
+            this.moveToNextToken();
+            this.ignoreSpaces();
+
+            let n2 = this.term(false);
+            if (n2 instanceof MError) {
+                return n2;
+            }
+
+            if (n2 instanceof MatrixRangeNode) {
+                if (n instanceof MatrixRangeNode) {
+                    return new MError(
+                        "both are range; should not reach here"
+                    )
+                } else {
+                    if (n2.step !== null) {
+                        return new MError(
+                            "invalid matrix construction",
+                            this.currentToken().position
+                        )
+                    }
+                    n = new MatrixRangeNode(n, n2.start, n2.end);
+                }
+            } else {
+                if (n instanceof MatrixRangeNode) {
+                    return new MError(
+                        "n range, n2 num; should not reach here"
+                    )
+                } else {
+                    n = new MatrixRangeNode(n, n2)
+                }
+            }
+            let lastValidIndex = this.currentIndex;
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            if (this.currentToken().type !== TokenType.COLON) {
+                this.currentIndex = lastValidIndex;
+                return n;
+            }
+        }
+        return n;
     }
 
     private getPowerOperator() {

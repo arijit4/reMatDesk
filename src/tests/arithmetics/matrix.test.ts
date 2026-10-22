@@ -74,6 +74,40 @@ describe('Matrix arithmetics', () => {
             expect(result.matrix[1][1].imaginary).toBe(0);
         }
     });
+    test('matrix build from range [start:end]', () => {
+        let result = getResult("2:4");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(1);
+            expect(result.dimensions.column).toBe(3);
+
+            expect(result.matrix[0][0].real).toBe(2);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(3);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[0][2].real).toBe(4);
+            expect(result.matrix[0][2].imaginary).toBe(0);
+        }
+    });
+    test('matrix build from range [start:step:end]', () => {
+        let result = getResult("2:4:10");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(1);
+            expect(result.dimensions.column).toBe(3);
+
+            expect(result.matrix[0][0].real).toBe(2);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(6);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[0][2].real).toBe(10);
+            expect(result.matrix[0][2].imaginary).toBe(0);
+        }
+    });
 
     // addition
     test('matrix addition [matrix + matrix]', () => {
