@@ -29,4 +29,8 @@ describe('Scalar arithmetics errors', () => {
         let result = getResult("4 @ 5");
         expect(result).toBeInstanceOf(MError);
     });
+    test('incomplete matrix', () => {
+        let result = getResult("[2, 3");
+        expect(result).toBeInstanceOf(MError);
+    });
 });

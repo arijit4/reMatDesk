@@ -245,12 +245,18 @@ export class Parser {
                     this.ignoreSpaces();
                 }
             }
+            if (this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN) {
+                return new MError(
+                    "Expected a closing square parenthesis",
+                    this.currentToken().position
+                );
+            }
             return n;
         }
         return new MError(
             "Expected a matrix",
             this.currentToken().position
-        )
+        );
     }
 
     private getNumber() {
@@ -304,6 +310,9 @@ export class Parser {
     }
 
     private getPowerOperator() {
+        if (this.currentIndex >= this.tokens.length) {
+            return null;
+        }
         let currentToken = this.currentToken();
         if (
             currentToken.type === TokenType.POWER ||
@@ -315,6 +324,9 @@ export class Parser {
     }
 
     private getFactorOperator() {
+        if (this.currentIndex >= this.tokens.length) {
+            return null;
+        }
         let currentToken = this.currentToken();
         if (
             currentToken.type === TokenType.MULTIPLY ||
@@ -328,6 +340,9 @@ export class Parser {
     }
 
     private getTermOperator() {
+        if (this.currentIndex >= this.tokens.length) {
+            return null;
+        }
         let currentToken = this.currentToken();
         if (
             currentToken.type === TokenType.PLUS ||
