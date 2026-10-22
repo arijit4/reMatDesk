@@ -277,13 +277,19 @@ export class Parser {
                 )
             );
         }
-        let sign = 1;
+        let sign = new MNumber(
+            new MAtom(
+                1,
+                0,
+                this.currentToken().position
+            )
+        );
         while (
             this.currentToken().type === TokenType.PLUS
             || this.currentToken().type === TokenType.MINUS
             ) {
             if (this.currentToken().type === TokenType.MINUS) {
-                sign *= -1;
+                sign.matrix[0][0].real *= -1;
             }
             this.moveToNextToken();
             this.ignoreSpaces();
@@ -291,7 +297,7 @@ export class Parser {
         if (this.currentToken().type === TokenType.NUMBER) {
             return new MNumber(
                 new MAtom(
-                    sign * parseFloat(this.currentToken().value),
+                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
                     0,
                     this.currentToken().position
                 )
@@ -300,10 +306,15 @@ export class Parser {
             return new MNumber(
                 new MAtom(
                     0,
-                    sign * parseFloat(this.currentToken().value),
+                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
                     this.currentToken().position
                 )
             );
+        } else if (this.currentToken().type !== TokenType.EOF) {
+            return new MultiplyNode(
+                this.term(false),
+                sign
+            )
         } else {
             return new MError(
                 "Expected a number",

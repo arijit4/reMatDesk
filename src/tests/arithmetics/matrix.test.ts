@@ -384,4 +384,20 @@ describe('Matrix arithmetics', () => {
             expect(result.matrix[1][1].imaginary).toBe(0);
         }
     });
+
+    // sign handling
+    test('sign before matrix', () => {
+        let result = getResult("-[3 - 2]");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(1);
+            expect(result.dimensions.column).toBe(2);
+
+            expect(result.matrix[0][0].real).toBe(-3);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(2);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+        }
+    });
 });

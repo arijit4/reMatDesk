@@ -134,4 +134,38 @@ describe('Scalar arithmetics', () => {
             expect(result.matrix[0][0].imaginary).toBe(0);
         }
     });
+
+    // sign handling
+    test('sign before number', () => {
+        let result = getResult("-3");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBe(-3);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+        }
+    });
+    test('sign before imaginary number', () => {
+        let result = getResult("-3i");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBe(0);
+            expect(result.matrix[0][0].imaginary).toBe(-3);
+        }
+    });
+    test('sign before parenthesis', () => {
+        let result = getResult("-(3 - 2)");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBe(-1);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+        }
+    });
+    test('sign before matrix', () => {
+        let result = getResult("-(3 - 2)");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBe(-1);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+        }
+    });
 });
