@@ -257,26 +257,6 @@ export class Parser {
         if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
             return this.getMatrix();
         }
-        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
-            return this.getMatrix();
-        }
-        if (this.currentToken().type === TokenType.NUMBER) {
-            return new MNumber(
-                new MAtom(
-                    parseFloat(this.currentToken().value),
-                    0,
-                    this.currentToken().position
-                )
-            );
-        } else if (this.currentToken().type === TokenType.I_NUMBER) {
-            return new MNumber(
-                new MAtom(
-                    0,
-                    parseFloat(this.currentToken().value),
-                    this.currentToken().position
-                )
-            );
-        }
         let sign = new MNumber(
             new MAtom(
                 1,
