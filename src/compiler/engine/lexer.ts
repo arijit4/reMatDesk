@@ -183,7 +183,7 @@ export class Lexer {
         let id = "";
         let newPosition = new Position(this.currentLine, this.currentIndex);
 
-        while (isAlphaNumeric(this.currentChar()) || this.currentChar() === '_') {
+        while ((isAlphaNumeric(this.currentChar()) || this.currentChar() === '_') && this.indexInRange()) {
             id += this.currentChar();
             this.currentIndex++;
             newPosition.addToPosition();

@@ -3,6 +3,7 @@ import {Parser} from "../../compiler/engine/parser";
 import {Lexer} from "../../compiler/engine/lexer";
 import {MNumber} from "../../compiler/data_models/MNumber";
 import {MError} from "../../compiler/data_models/MError";
+import {SyntaxTable} from "../../model/syntax_table";
 
 function getResult(input: string) {
     let lexer = new Lexer(input);
@@ -13,7 +14,8 @@ function getResult(input: string) {
     let parser = new Parser(tokens);
     let x = parser.term(false);
 
-    let executor = new Executor();
+    let syntaxTable = new SyntaxTable();
+    let executor = new Executor(syntaxTable);
     return executor.execute(x!);
 }
 

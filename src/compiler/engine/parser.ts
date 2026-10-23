@@ -11,6 +11,7 @@ import {FactorType, PowerFactorType, TermType} from "../centralTypes";
 import {MError} from "../data_models/MError";
 import {MNumberBuilder} from "../data_models/MNumberBuilder";
 import {MatrixRangeNode} from "../nodes/matrix_range_node";
+import {VarAccessNode} from "../nodes/var_access_node";
 
 export class Parser {
     public tokens: Token[];
@@ -298,6 +299,11 @@ export class Parser {
                     this.currentToken().position
                 )
             );
+        } else if (this.currentToken().type === TokenType.IDENTIFIER) {
+            n = new VarAccessNode(
+                this.currentToken().value,
+                this.currentToken().position
+            )
         } else if (this.currentToken().type !== TokenType.EOF) {
             n = new MultiplyNode(
                 this.term(false),
