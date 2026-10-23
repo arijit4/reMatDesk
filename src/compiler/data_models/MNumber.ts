@@ -5,6 +5,7 @@ import {Executor} from "../engine/executor";
 export class MNumber {
     public matrix: (MAtom)[][];
     public dimensions = {row: 0, column: 0};
+    private currentlyBuildingRow = 0;
 
     constructor(
         value: MAtom | null
@@ -21,16 +22,30 @@ export class MNumber {
     addRow() {
         this.matrix.push([]);
         this.dimensions.row++;
+        this.currentlyBuildingRow++;
     }
 
     push(
-        value: MAtom
+        value: MAtom | MNumber
     ) {
         if (this.dimensions.row === 0) {
             this.addRow();
         }
 
-        this.matrix[this.dimensions.row - 1].push(value);
+        if (value instanceof MAtom) {
+            this.matrix[this.currentlyBuildingRow - 1].push(value);
+        } else {
+            let oldRow = this.currentlyBuildingRow;
+            for (let i = 0; i < value.dimensions.row; i++) {
+                if (i > 0) {
+                    this.addRow();
+                }
+                for (let j = 0; j < value.dimensions.column; j++) {
+                    this.matrix[(oldRow - 1) + i].push(value.matrix[i][j]);
+                }
+            }
+            this.currentlyBuildingRow = oldRow;
+        }
         if (this.dimensions.row === 1) {
             this.dimensions.column = this.matrix[0].length;
         } else {

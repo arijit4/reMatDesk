@@ -59,13 +59,19 @@ export class MNumberBuilder {
                     if (result instanceof MError) {
                         return result;
                     } else if (result instanceof MNumber) {
-                        n.push(result.matrix[0][0]); // assuming result is a scalar MNumber
+                        n.push(result)
                     } else {
                         return new MError(`Unexpected result type: ${typeof result}`);
                     }
                 }
             }
         }
-        return n.validate();
+        let res = n.validate();
+        if (res instanceof MError) {
+            return res;
+        }
+        this.dimensions.row = res.dimensions.row;
+        this.dimensions.column = res.dimensions.column;
+        return res;
     }
 }

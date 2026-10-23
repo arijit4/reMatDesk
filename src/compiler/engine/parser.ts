@@ -318,7 +318,6 @@ export class Parser {
         }
 
         while (this.currentToken().type === TokenType.COLON) {
-            console.log(n)
             this.moveToNextToken();
             this.ignoreSpaces();
 

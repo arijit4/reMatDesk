@@ -4,7 +4,7 @@ import {Executor} from "./compiler/engine/executor";
 import {MError} from "./compiler/data_models/MError";
 import {MNumberBuilder} from "./compiler/data_models/MNumberBuilder";
 
-let input = "2:4:2:";
+let input = "[2 [3; 5]; 4]";
 
 let lexer = new Lexer(input);
 
