@@ -108,8 +108,28 @@ describe('Matrix arithmetics', () => {
             expect(result.matrix[0][2].imaginary).toBe(0);
         }
     });
-    test('matrix build with matrix as element [start:step:end]', () => {
+    test('matrix build with matrix as element', () => {
         let result = getResult("[[2 4]; [3 5]]");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.dimensions.row).toBe(2);
+            expect(result.dimensions.column).toBe(2);
+
+            expect(result.matrix[0][0].real).toBe(2);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+
+            expect(result.matrix[0][1].real).toBe(4);
+            expect(result.matrix[0][1].imaginary).toBe(0);
+
+            expect(result.matrix[1][0].real).toBe(3);
+            expect(result.matrix[1][0].imaginary).toBe(0);
+
+            expect(result.matrix[1][1].real).toBe(5);
+            expect(result.matrix[1][1].imaginary).toBe(0);
+        }
+    });
+    test('matrix build with matrix as element 2', () => {
+        let result = getResult("[2 [3; 5]; 4]");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -121,11 +141,11 @@ describe('Matrix arithmetics', () => {
             expect(result.matrix[0][1].real).toBe(3);
             expect(result.matrix[0][1].imaginary).toBe(0);
 
-            expect(result.matrix[0][2].real).toBe(4);
-            expect(result.matrix[0][2].imaginary).toBe(0);
-
             expect(result.matrix[1][0].real).toBe(5);
             expect(result.matrix[1][0].imaginary).toBe(0);
+
+            expect(result.matrix[1][1].real).toBe(4);
+            expect(result.matrix[1][1].imaginary).toBe(0);
         }
     });
 

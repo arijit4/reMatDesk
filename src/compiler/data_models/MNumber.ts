@@ -272,7 +272,7 @@ export class MNumber {
         return this.dimensions.row === 1 && this.dimensions.column === 1;
     }
 
-    validate() {
+    validate(): MNumber | MError {
         // clean up empty rows
         this.matrix = this.matrix.filter(row => row.length > 0);
         this.dimensions.row = this.matrix.length;

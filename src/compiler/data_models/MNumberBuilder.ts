@@ -45,11 +45,9 @@ export class MNumberBuilder {
                 continue;
             }
             n.addRow();
-            for (let j = 0; j < this.dimensions.column; j++) {
+            for (let j = 0; j < this.matrix[i].length; j++) {
                 let term = this.matrix[i][j];
-                if (term === undefined) { // i dont know why this is undefined, but it happens when the matrix is malformed, like [1 2; 3]
-                    return new MError("Malformed matrix; term is undefined");
-                } else if (term instanceof MError) {
+                if (term instanceof MError) {
                     return term;
                 } else if (term instanceof MNumber) {
                     n.push(term.matrix[0][0]);
@@ -66,12 +64,6 @@ export class MNumberBuilder {
                 }
             }
         }
-        let res = n.validate();
-        if (res instanceof MError) {
-            return res;
-        }
-        this.dimensions.row = res.dimensions.row;
-        this.dimensions.column = res.dimensions.column;
-        return res;
+        return n.validate();
     }
 }

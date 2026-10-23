@@ -321,7 +321,7 @@ export class Parser {
             this.moveToNextToken();
             this.ignoreSpaces();
 
-            let n2 = this.term(false);
+            let n2 = this.term(true);
             if (n2 instanceof MError) {
                 return n2;
             }
