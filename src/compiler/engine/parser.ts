@@ -300,13 +300,17 @@ export class Parser {
                 )
             );
         } else if (this.currentToken().type === TokenType.IDENTIFIER) {
-            n = new VarAccessNode(
-                this.currentToken().value,
-                this.currentToken().position
-            )
+            n = new MultiplyNode(
+                sign,
+                new VarAccessNode(
+                    this.currentToken().value,
+                    this.currentToken().position
+                )
+            );
         } else if (this.currentToken().type !== TokenType.EOF) {
             n = new MultiplyNode(
-                this.term(false),
+                // this.term(false),
+                this.parenthesisFactor(false),
                 sign
             )
         } else {

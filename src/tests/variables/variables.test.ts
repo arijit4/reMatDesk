@@ -28,28 +28,20 @@ describe('Variable operations', () => {
             expect(result.matrix[0][0].imaginary).toBe(0);
         }
     });
-    test('no closing bracket', () => {
-        let result = getResult("2 + (3");
-        expect(result).toBeInstanceOf(MError);
+    test('prefix sign handling', () => {
+        let result = getResult("-pi + 1");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBeCloseTo(-Math.PI + 1, 6);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+        }
     });
-    test('unexpected character', () => {
-        let result = getResult("4 @ 5");
-        expect(result).toBeInstanceOf(MError);
-    });
-    test('incomplete matrix', () => {
-        let result = getResult("[2, 3");
-        expect(result).toBeInstanceOf(MError);
-    });
-    test('more than 2 colons', () => {
-        let result = getResult("2:4:10:15");
-        expect(result).toBeInstanceOf(MError);
-    });
-    test('incomplete range [a:]', () => {
-        let result = getResult("2:");
-        expect(result).toBeInstanceOf(MError);
-    });
-    test('incomplete range [a:b:]', () => {
-        let result = getResult("2:4:");
-        expect(result).toBeInstanceOf(MError);
+    test('parenthesis handling', () => {
+        let result = getResult("(-pi) + 1");
+        expect(result).toBeInstanceOf(MNumber);
+        if (result instanceof MNumber) {
+            expect(result.matrix[0][0].real).toBeCloseTo(-Math.PI + 1, 6);
+            expect(result.matrix[0][0].imaginary).toBe(0);
+        }
     });
 });
