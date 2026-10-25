@@ -12,6 +12,7 @@ import {MError} from "../data_models/MError";
 import {MNumberBuilder} from "../data_models/MNumberBuilder";
 import {MatrixRangeNode} from "../nodes/matrix_range_node";
 import {VarAccessNode} from "../nodes/var_access_node";
+import {VarAssignmentNode} from "../nodes/var_assignment_node";
 
 export class Parser {
     public tokens: Token[];
@@ -23,8 +24,23 @@ export class Parser {
 
     public generateAST() {
         let currentToken = this.currentToken();
-        if (currentToken.type === TokenType.NUMBER) {
+        let lastValidIndex = this.currentIndex;
+        this.moveToNextToken();
+        this.ignoreSpaces();
+        let secondToken = this.currentToken();
 
+        if (currentToken.type === TokenType.IDENTIFIER && secondToken.type === TokenType.EQUAL) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+
+            return new VarAssignmentNode(
+                currentToken.value,
+                this.term(false),
+                currentToken.position
+            )
+        } else {
+            this.currentIndex = lastValidIndex;
+            return this.term(false);
         }
     }
 
@@ -196,6 +212,10 @@ export class Parser {
             }
         }
         return n1;
+    }
+
+    public statement() {
+
     }
 
     public currentToken() {

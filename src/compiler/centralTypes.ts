@@ -8,12 +8,14 @@ import {MError} from "./data_models/MError";
 import {MNumberBuilder} from "./data_models/MNumberBuilder";
 import {MatrixRangeNode} from "./nodes/matrix_range_node";
 import {VarAccessNode} from "./nodes/var_access_node";
+import {VarAssignmentNode} from "./nodes/var_assignment_node";
 
 export type ParserNode =
     MNumber
     | MNumberBuilder
     | MatrixRangeNode
     | VarAccessNode
+    | VarAssignmentNode
     | MError
     | PowerNode
     | PlusNode
@@ -27,6 +29,7 @@ export type ParserNode =
 export type PowerFactorType =
     MError
     | VarAccessNode
+    | VarAssignmentNode
     | MNumberBuilder
     | MatrixRangeNode
     | MNumber
@@ -38,6 +41,7 @@ export type FactorType =
     | MNumberBuilder
     | MatrixRangeNode
     | VarAccessNode
+    | VarAssignmentNode
     | MNumber
     | PowerNode
     | MultiplyNode
@@ -51,6 +55,7 @@ export type TermType =
     | MNumber
     | MNumberBuilder
     | VarAccessNode
+    | VarAssignmentNode
     | MatrixRangeNode
     | PowerNode
     | PlusNode

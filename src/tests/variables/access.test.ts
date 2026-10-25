@@ -19,7 +19,7 @@ function getResult(input: string) {
     return executor.execute(x!);
 }
 
-describe('Variable operations', () => {
+describe('Variable access', () => {
     test('variable access', () => {
         let result = getResult("pi + 1");
         expect(result).toBeInstanceOf(MNumber);
