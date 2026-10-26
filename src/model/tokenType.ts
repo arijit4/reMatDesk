@@ -1,7 +1,9 @@
 export class TokenType {
     public static readonly NUMBER = "NUMBER";
     public static readonly I_NUMBER = "I_NUMBER";
+
     public static readonly IDENTIFIER = "IDENTIFIER";
+    public static readonly BOOLEAN = "BOOLEAN";
 
     public static readonly PLUS = "PLUS";
     public static readonly MINUS = "MINUS";
@@ -14,6 +16,7 @@ export class TokenType {
     public static readonly DOT_POWER = "DOT_POWER";
 
     public static readonly EQUAL = "EQUAL";
+    public static readonly EQUAL_EQUAL = "EQUAL_EQUAL";
     public static readonly SEMICOLON = "SEMICOLON";
     public static readonly COLON = "COLON";
     public static readonly COMMA = "COMMA";

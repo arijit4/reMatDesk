@@ -22,4 +22,7 @@ purely written in TypeScript, it can also be made to run in the browser as well.
   - Exponentiation (in MatLab way)
   - Complex numbers
   - Matrix
+- Variables
+- Comparisons
+  - Equal
 - Error messages

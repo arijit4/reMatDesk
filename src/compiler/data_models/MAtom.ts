@@ -1,4 +1,3 @@
-// import {Token} from "./model/token";
 import {Position} from "../../model/position";
 
 export class MAtom {
@@ -69,6 +68,16 @@ export class MAtom {
             common * Math.cos(in_sin_cos),
             common * Math.sin(in_sin_cos)
         )
+    }
+
+    equals(n: MAtom) {
+        if (
+            Math.abs(this.real - n.real) < 1e-13 &&
+            Math.abs(this.imaginary - n.imaginary) < 1e-13
+        ) {
+            return new MAtom(1, 0, null, true)
+        }
+        return new MAtom(0, 0, null, true)
     }
 
     hasImaginary() {

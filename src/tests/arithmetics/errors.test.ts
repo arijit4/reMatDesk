@@ -11,7 +11,8 @@ function getResult(input: string) {
         return tokens;
     }
     let parser = new Parser(tokens);
-    let x = parser.term(false);
+    // let x = parser.term(false);
+    let x = parser.comparison(false);
 
     let syntaxTable = new SyntaxTable();
     let executor = new Executor(syntaxTable);

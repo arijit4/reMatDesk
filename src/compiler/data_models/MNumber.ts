@@ -264,6 +264,21 @@ export class MNumber {
         return result;
     }
 
+    equals(other: MNumber): MNumber | MError {
+        if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
+            return new MError("Matrix dimensions must match for equality comparison.", null);
+        }
+        let result = new MNumber(null);
+
+        for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
+            for (let j = 0; j < this.dimensions.column; j++) {
+                result.push(this.matrix[i][j].equals(other.matrix[i][j]));
+            }
+        }
+        return result.validate();
+    }
+
     execute(_: Executor): MNumber {
         return this;
     }

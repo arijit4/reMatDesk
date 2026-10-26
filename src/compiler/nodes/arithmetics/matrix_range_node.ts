@@ -1,8 +1,8 @@
-import {ParserNode, TermType} from "../centralTypes";
-import {Executor} from "../engine/executor";
-import {MNumber} from "../data_models/MNumber";
-import {MAtom} from "../data_models/MAtom";
-import {MError} from "../data_models/MError";
+import {ParserNode, TermType} from "../../centralTypes";
+import {Executor} from "../../engine/executor";
+import {MNumber} from "../../data_models/MNumber";
+import {MAtom} from "../../data_models/MAtom";
+import {MError} from "../../data_models/MError";
 
 export class MatrixRangeNode {
     public start: TermType;

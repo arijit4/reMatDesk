@@ -2,17 +2,18 @@ import {Token} from "../../model/token";
 import {MAtom} from "../data_models/MAtom";
 import {TokenType} from "../../model/tokenType";
 import {MNumber} from "../data_models/MNumber";
-import {DotMultiplyNode, MultiplyNode} from "../nodes/multiply_node";
-import {DivisionNode, DotDivisionNode} from "../nodes/division_node";
-import {PlusNode} from "../nodes/plus_node";
-import {MinusNode} from "../nodes/minus_node";
-import {DotPowerNode, PowerNode} from "../nodes/power_node";
+import {DotMultiplyNode, MultiplyNode} from "../nodes/arithmetics/multiply_node";
+import {DivisionNode, DotDivisionNode} from "../nodes/arithmetics/division_node";
+import {PlusNode} from "../nodes/arithmetics/plus_node";
+import {MinusNode} from "../nodes/arithmetics/minus_node";
+import {DotPowerNode, PowerNode} from "../nodes/arithmetics/power_node";
 import {FactorType, PowerFactorType, TermType} from "../centralTypes";
 import {MError} from "../data_models/MError";
 import {MNumberBuilder} from "../data_models/MNumberBuilder";
-import {MatrixRangeNode} from "../nodes/matrix_range_node";
-import {VarAccessNode} from "../nodes/var_access_node";
-import {VarAssignmentNode} from "../nodes/var_assignment_node";
+import {MatrixRangeNode} from "../nodes/arithmetics/matrix_range_node";
+import {VarAccessNode} from "../nodes/variables/var_access_node";
+import {VarAssignmentNode} from "../nodes/variables/var_assignment_node";
+import {EqualNode} from "../nodes/comparisons/equal_node";
 
 export class Parser {
     public tokens: Token[];
@@ -35,12 +36,12 @@ export class Parser {
 
             return new VarAssignmentNode(
                 currentToken.value,
-                this.term(false),
+                this.comparison(false),
                 currentToken.position
             )
         } else {
             this.currentIndex = lastValidIndex;
-            return this.term(false);
+            return this.comparison(false);
         }
     }
 
@@ -49,7 +50,7 @@ export class Parser {
             this.moveToNextToken();
             this.ignoreSpaces();
 
-            let n1: TermType = this.term(false);
+            let n1: TermType = this.comparison(isInMatrix);
             if (n1 instanceof MError) {
                 return n1;
             }
@@ -214,8 +215,34 @@ export class Parser {
         return n1;
     }
 
-    public statement() {
+    public comparison(isInMatrix: boolean): TermType {
+        let t1 = this.term(isInMatrix);
+        if (t1 instanceof MError) {
+            return t1;
+        }
+        let lastValidIndex = this.currentIndex;
+        this.moveToNextToken();
+        this.ignoreSpaces();
 
+        if (
+            this.currentToken().type === TokenType.EQUAL_EQUAL
+            // || this.currentToken().type === TokenType.LESS_THAN
+            // || this.currentToken().type === TokenType.GREATER_THAN
+        ) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            let t2 = this.term(isInMatrix);
+            if (t2 instanceof MError) {
+                return t2;
+            }
+
+            return new EqualNode(
+                t1,
+                t2
+            );
+        }
+        this.currentIndex = lastValidIndex;
+        return t1;
     }
 
     public currentToken() {
@@ -249,7 +276,8 @@ export class Parser {
                 this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN
                 && this.currentToken().type !== TokenType.EOF
                 ) {
-                let a = this.term(true);
+                // let a = this.term(true);
+                let a = this.comparison(true);
                 if (a instanceof MError) {
                     return a;
                 }
@@ -282,6 +310,12 @@ export class Parser {
     }
 
     private getNumber(): FactorType {
+        if (this.currentToken().type === TokenType.EQUAL_EQUAL) {
+            return new MError(
+                `invalid '${this.currentToken().value}' operation`,
+                this.currentToken().position
+            );
+        }
         if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
             return this.getMatrix();
         }
@@ -292,6 +326,7 @@ export class Parser {
                 this.currentToken().position
             )
         );
+        let number_of_prefix_signs = 0;
         while (
             this.currentToken().type === TokenType.PLUS
             || this.currentToken().type === TokenType.MINUS
@@ -299,6 +334,7 @@ export class Parser {
             if (this.currentToken().type === TokenType.MINUS) {
                 sign.matrix[0][0].real *= -1;
             }
+            number_of_prefix_signs++;
             this.moveToNextToken();
             this.ignoreSpaces();
         }
@@ -327,9 +363,22 @@ export class Parser {
                     this.currentToken().position
                 )
             );
+        } else if (this.currentToken().type === TokenType.BOOLEAN) {
+            if (number_of_prefix_signs > 0) {
+                return new MError(
+                    "invalid boolean sign",
+                    this.currentToken().position
+                );
+            }
+            n = new MNumber(
+                new MAtom(
+                    this.currentToken().value === "true" ? 1 : 0,
+                    0,
+                    this.currentToken().position
+                )
+            );
         } else if (this.currentToken().type !== TokenType.EOF) {
             n = new MultiplyNode(
-                // this.term(false),
                 this.parenthesisFactor(false),
                 sign
             )
@@ -351,7 +400,8 @@ export class Parser {
             this.moveToNextToken();
             this.ignoreSpaces();
 
-            let n2 = this.term(true);
+            // let n2 = this.term(true);
+            let n2 = this.comparison(true);
             if (n2 instanceof MError) {
                 return n2;
             }
@@ -435,7 +485,7 @@ export class Parser {
     }
 
     private ignoreSpaces() {
-        while (this.currentIndex < this.tokens.length && this.currentToken().type === TokenType.SPACE) {
+        while (this.currentIndex < this.tokens.length - 2 && this.currentToken().type === TokenType.SPACE) {
             this.moveToNextToken();
         }
     }

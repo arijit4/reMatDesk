@@ -1,5 +1,5 @@
 import {Token} from "../../model/token";
-import {isAlpha, isAlphaNumeric, isDigit, isNewline, isOperator} from "../../utils/charTypeTester";
+import {isAlpha, isAlphaNumeric, isBoolean, isDigit, isNewline, isOperator} from "../../utils/charTypeTester";
 import {Position} from "../../model/position";
 import {TokenType} from "../../model/tokenType";
 import {MError} from "../data_models/MError";
@@ -54,7 +54,14 @@ export class Lexer {
             } else if (currentChar === "=") {
                 this.currentIndex++;
                 newPosition.addToPosition();
-                tokens.push(new Token(TokenType.EQUAL, "=", newPosition));
+
+                if (this.currentChar() === "=") {
+                    this.currentIndex++;
+                    newPosition.addToPosition();
+                    tokens.push(new Token(TokenType.EQUAL_EQUAL, "==", newPosition));
+                } else {
+                    tokens.push(new Token(TokenType.EQUAL, "=", newPosition));
+                }
             } else if (isOperator(currentChar)) {
                 this.currentIndex++;
                 newPosition.addToPosition();
@@ -187,6 +194,13 @@ export class Lexer {
             id += this.currentChar();
             this.currentIndex++;
             newPosition.addToPosition();
+        }
+        if (isBoolean(id)) {
+            return new Token(
+                TokenType.BOOLEAN,
+                id,
+                newPosition
+            );
         }
         return new Token(
             TokenType.IDENTIFIER,

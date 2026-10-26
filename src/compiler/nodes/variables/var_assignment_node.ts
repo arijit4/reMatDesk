@@ -1,8 +1,8 @@
-import {TermType} from "../centralTypes";
-import {Position} from "../../model/position";
-import {Executor} from "../engine/executor";
-import {MError} from "../data_models/MError";
-import {MNumber} from "../data_models/MNumber";
+import {TermType} from "../../centralTypes";
+import {Position} from "../../../model/position";
+import {Executor} from "../../engine/executor";
+import {MError} from "../../data_models/MError";
+import {MNumber} from "../../data_models/MNumber";
 
 export class VarAssignmentNode {
     private name: string;

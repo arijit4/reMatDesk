@@ -1,9 +1,9 @@
-import {MNumber} from "../data_models/MNumber";
-import {ParserNode} from "../centralTypes";
-import {MError} from "../data_models/MError";
-import {Executor} from "../engine/executor";
+import {MNumber} from "../../data_models/MNumber";
+import {ParserNode} from "../../centralTypes";
+import {MError} from "../../data_models/MError";
+import {Executor} from "../../engine/executor";
 
-export class MultiplyNode {
+export class DivisionNode {
     left: ParserNode;
     right: ParserNode;
 
@@ -20,11 +20,11 @@ export class MultiplyNode {
         if (l instanceof MError) { return l }
         let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
         if (r instanceof MError) { return r }
-        return l.multiply(r);
+        return l.divide(r);
     }
 }
 
-export class DotMultiplyNode {
+export class DotDivisionNode {
     left: ParserNode;
     right: ParserNode;
 
@@ -41,6 +41,6 @@ export class DotMultiplyNode {
         if (l instanceof MError) { return l }
         let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
         if (r instanceof MError) { return r }
-        return l.dotMultiply(r);
+        return l.dotDivide(r);
     }
 }

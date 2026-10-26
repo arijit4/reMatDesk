@@ -1,7 +1,7 @@
-import {Executor} from "../engine/executor";
-import {MNumber} from "../data_models/MNumber";
-import {MError} from "../data_models/MError";
-import {Position} from "../../model/position";
+import {Executor} from "../../engine/executor";
+import {MNumber} from "../../data_models/MNumber";
+import {MError} from "../../data_models/MError";
+import {Position} from "../../../model/position";
 
 export class VarAccessNode {
     public key: string;

@@ -1,9 +1,9 @@
-import {ParserNode} from "../centralTypes";
-import {MNumber} from "../data_models/MNumber";
-import {MError} from "../data_models/MError";
-import {Executor} from "../engine/executor";
+import {MNumber} from "../../data_models/MNumber";
+import {ParserNode} from "../../centralTypes";
+import {MError} from "../../data_models/MError";
+import {Executor} from "../../engine/executor";
 
-export class PowerNode {
+export class MultiplyNode {
     left: ParserNode;
     right: ParserNode;
 
@@ -17,25 +17,14 @@ export class PowerNode {
 
     execute(e: Executor): MNumber | MError {
         let l = this.left instanceof MNumber ? this.left : this.left.execute(e);
-        if (l instanceof MError) {
-            return l
-        }
+        if (l instanceof MError) { return l }
         let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
-        if (r instanceof MError) {
-            return r
-        }
-
-        if (l.isScalar() || r.isScalar()) {
-            return l.scalarPower(r);
-        }
-        return new MError(
-            "At least one of the operands must be a scalar for power operation.",
-            null
-        );
+        if (r instanceof MError) { return r }
+        return l.multiply(r);
     }
 }
 
-export class DotPowerNode {
+export class DotMultiplyNode {
     left: ParserNode;
     right: ParserNode;
 
@@ -49,13 +38,9 @@ export class DotPowerNode {
 
     execute(e: Executor): MNumber | MError {
         let l = this.left instanceof MNumber ? this.left : this.left.execute(e);
-        if (l instanceof MError) {
-            return l
-        }
+        if (l instanceof MError) { return l }
         let r = this.right instanceof MNumber ? this.right : this.right.execute(e);
-        if (r instanceof MError) {
-            return r
-        }
-        return l.dotToThePowerOf(r);
+        if (r instanceof MError) { return r }
+        return l.dotMultiply(r);
     }
 }

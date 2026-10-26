@@ -3,3 +3,7 @@ export const isAlpha = (char: string) => /[a-zA-Z]/.test(char);
 export const isAlphaNumeric = (char: string) => /[a-zA-Z0-9]/.test(char);
 export const isNewline = (char: string) => char === '\n';
 export const isOperator = (char: string) => ['+', '-', '*', '/', '^'].includes(char);
+
+export const isBoolean = (value: string): boolean => {
+    return ['true', 'false'].includes(value);
+}
