@@ -2,7 +2,7 @@ import {MError} from "../compiler/data_models/MError";
 import {MNumber} from "../compiler/data_models/MNumber";
 import {MAtom} from "../compiler/data_models/MAtom";
 
-export class SyntaxTable {
+export class SymbolTable {
     public dictionary: Record<string, MNumber>;
 
     constructor() {
@@ -31,5 +31,21 @@ export class SyntaxTable {
 
     has(key: string) {
         return this.dictionary[key] !== undefined;
+    }
+
+    stringify(includeDefaults: boolean = false): string {
+        let temp = this.dictionary
+        let result = "========== Syntax Table =========\n";
+        for (let [key, value] of Object.entries(temp)) {
+            if (includeDefaults && value.matrix[0][0].isDefault) {
+                result += `${key} = ${value.matrix[0][0].real} + ${value.matrix[0][0].imaginary}i`;
+                result += " \t\t(default value)\n";
+            }
+            if (!value.matrix[0][0].isDefault) {
+                result += `${key} = ${value.matrix[0][0].real} + ${value.matrix[0][0].imaginary}i`;
+                result += " \n";
+            }
+        }
+        return result;
     }
 }

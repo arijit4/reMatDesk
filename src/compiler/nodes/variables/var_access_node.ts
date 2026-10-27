@@ -16,6 +16,6 @@ export class VarAccessNode {
     }
 
     execute(e: Executor): MNumber | MError {
-        return e.syntaxTable.get(this.key);
+        return e.symbolTable.get(this.key);
     }
 }

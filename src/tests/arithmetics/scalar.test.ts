@@ -3,7 +3,7 @@ import {Parser} from "../../compiler/engine/parser";
 import {Lexer} from "../../compiler/engine/lexer";
 import {MNumber} from "../../compiler/data_models/MNumber";
 import {MError} from "../../compiler/data_models/MError";
-import {SyntaxTable} from "../../model/syntax_table";
+import {SymbolTable} from "../../model/symbol_table";
 
 function getResult(input: string) {
     let lexer = new Lexer(input);
@@ -15,7 +15,7 @@ function getResult(input: string) {
     // let x = parser.term(false);
     let x = parser.comparison(false);
 
-    let syntaxTable = new SyntaxTable();
+    let syntaxTable = new SymbolTable();
     let executor = new Executor(syntaxTable);
     return executor.execute(x!);
 }

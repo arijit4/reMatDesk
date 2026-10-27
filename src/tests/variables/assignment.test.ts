@@ -2,14 +2,14 @@ import {Lexer} from "../../compiler/engine/lexer";
 import {MError} from "../../compiler/data_models/MError";
 import {Parser} from "../../compiler/engine/parser";
 import {Executor} from "../../compiler/engine/executor";
-import {SyntaxTable} from "../../model/syntax_table";
+import {SymbolTable} from "../../model/symbol_table";
 import {MNumber} from "../../compiler/data_models/MNumber";
 
 function getResult(input: string): { executor: Executor, result: MNumber | MError } {
     let lexer = new Lexer(input);
     let tokens = lexer.tokenize();
 
-    let syntaxTable = new SyntaxTable();
+    let syntaxTable = new SymbolTable();
     let executor = new Executor(syntaxTable);
 
     if (tokens instanceof MError) {
@@ -26,7 +26,7 @@ describe('Variable assignment', () => {
         let result_ = getResult("x = 3^2 + (1)");
         let executor = result_.executor;
 
-        let found = executor.syntaxTable.get("x");
+        let found = executor.symbolTable.get("x");
 
         expect(found).toBeInstanceOf(MNumber);
         if (found instanceof MNumber) {

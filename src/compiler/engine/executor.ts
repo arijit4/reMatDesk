@@ -1,19 +1,19 @@
 import {ParserNode} from "../centralTypes";
 import {MError} from "../data_models/MError";
-import {SyntaxTable} from "../../model/syntax_table";
+import {SymbolTable} from "../../model/symbol_table";
 
 export class Executor {
-    public syntaxTable: SyntaxTable;
+    public symbolTable: SymbolTable;
 
-    constructor(syntax_table: SyntaxTable) {
-        this.syntaxTable = syntax_table;
+    constructor(symbolTable: SymbolTable) {
+        this.symbolTable = symbolTable;
     }
 
     execute(node: ParserNode) {
         if (node instanceof MError) {
             return node;
         }
-        let mini_executor = new Executor(this.syntaxTable);
+        let mini_executor = new Executor(this.symbolTable);
         return node.execute(mini_executor);
     }
 }

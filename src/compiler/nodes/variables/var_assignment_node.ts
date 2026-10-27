@@ -24,7 +24,7 @@ export class VarAssignmentNode {
         if (result instanceof MError) {
             return result;
         }
-        e.syntaxTable.add(this.name, result);
+        e.symbolTable.add(this.name, result);
         return result;
     }
 }

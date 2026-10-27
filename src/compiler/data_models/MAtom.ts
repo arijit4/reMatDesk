@@ -75,9 +75,9 @@ export class MAtom {
             Math.abs(this.real - n.real) < 1e-13 &&
             Math.abs(this.imaginary - n.imaginary) < 1e-13
         ) {
-            return new MAtom(1, 0, null, true)
+            return new MAtom(1, 0, null, false)
         }
-        return new MAtom(0, 0, null, true)
+        return new MAtom(0, 0, null, false)
     }
 
     hasImaginary() {
