@@ -17,6 +17,13 @@ export class TokenType {
 
     public static readonly EQUAL = "EQUAL";
     public static readonly EQUAL_EQUAL = "EQUAL_EQUAL";
+    public static readonly NOT = "NOT";
+    public static readonly NOT_EQUAL = "NOT_EQUAL";
+    public static readonly GREATER = "GREATER";
+    public static readonly GREATER_OR_EQUAL = "GREATER_OR_EQUAL";
+    public static readonly LESS = "LESS";
+    public static readonly LESS_OR_EQUAL = "LESS_OR_EQUAL";
+
     public static readonly SEMICOLON = "SEMICOLON";
     public static readonly COLON = "COLON";
     public static readonly COMMA = "COMMA";

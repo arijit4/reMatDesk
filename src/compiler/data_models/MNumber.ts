@@ -126,7 +126,7 @@ export class MNumber {
             return result;
         }
         if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
-           return new MError("Matrix dimensions must match for subtraction.", null);
+            return new MError("Matrix dimensions must match for subtraction.", null);
         }
 
         let result = new MNumber(null);
@@ -274,6 +274,81 @@ export class MNumber {
             result.addRow();
             for (let j = 0; j < this.dimensions.column; j++) {
                 result.push(this.matrix[i][j].equals(other.matrix[i][j]));
+            }
+        }
+        return result.validate();
+    }
+
+    notEquals(other: MNumber): MNumber | MError {
+        if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
+            return new MError("Matrix dimensions must match for inequality comparison.", null);
+        }
+        let result = new MNumber(null);
+
+        for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
+            for (let j = 0; j < this.dimensions.column; j++) {
+                result.push(this.matrix[i][j].notEquals(other.matrix[i][j]));
+            }
+        }
+        return result.validate();
+    }
+
+    lessThan(other: MNumber): MNumber | MError {
+        if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
+            return new MError("Matrix dimensions must match for less than comparison.", null);
+        }
+        let result = new MNumber(null);
+
+        for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
+            for (let j = 0; j < this.dimensions.column; j++) {
+                result.push(this.matrix[i][j].lessThan(other.matrix[i][j]));
+            }
+        }
+        return result.validate();
+    }
+
+    lessThanOrEqual(other: MNumber): MNumber | MError {
+        if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
+            return new MError("Matrix dimensions must match for less than comparison.", null);
+        }
+        let result = new MNumber(null);
+
+        for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
+            for (let j = 0; j < this.dimensions.column; j++) {
+                result.push(this.matrix[i][j].lessThanOrEqual(other.matrix[i][j]));
+            }
+        }
+        return result.validate();
+    }
+
+    greaterThan(other: MNumber): MNumber | MError {
+        if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
+            return new MError("Matrix dimensions must match for less than comparison.", null);
+        }
+        let result = new MNumber(null);
+
+        for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
+            for (let j = 0; j < this.dimensions.column; j++) {
+                result.push(this.matrix[i][j].greaterThan(other.matrix[i][j]));
+            }
+        }
+        return result.validate();
+    }
+
+    greaterThanOrEqual(other: MNumber): MNumber | MError {
+        if (this.dimensions.row !== other.dimensions.row || this.dimensions.column !== other.dimensions.column) {
+            return new MError("Matrix dimensions must match for less than comparison.", null);
+        }
+        let result = new MNumber(null);
+
+        for (let i = 0; i < this.dimensions.row; i++) {
+            result.addRow();
+            for (let j = 0; j < this.dimensions.column; j++) {
+                result.push(this.matrix[i][j].greaterThanOrEqual(other.matrix[i][j]));
             }
         }
         return result.validate();

@@ -23,6 +23,13 @@ purely written in TypeScript, it can also be made to run in the browser as well.
   - Complex numbers
   - Matrix
 - Variables
+  - Assignment
+  - Accessing
 - Comparisons
   - Equal
+  - Not equal
+  - Greater than
+  - Less than
+  - Greater than or equal to
+  - Less than or equal to
 - Error messages

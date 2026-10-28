@@ -14,6 +14,11 @@ import {MatrixRangeNode} from "../nodes/arithmetics/matrix_range_node";
 import {VarAccessNode} from "../nodes/variables/var_access_node";
 import {VarAssignmentNode} from "../nodes/variables/var_assignment_node";
 import {EqualNode} from "../nodes/comparisons/equal_node";
+import {NotEqualNode} from "../nodes/comparisons/not_equal_node";
+import {LessThanNode} from "../nodes/comparisons/less_than_node";
+import {GreaterThanNode} from "../nodes/comparisons/greater_than_node";
+import {LessOrEqualNode} from "../nodes/comparisons/less_or_equal_node";
+import {GreaterOrEqualNode} from "../nodes/comparisons/greater_or_equal_node";
 
 export class Parser {
     public tokens: Token[];
@@ -226,8 +231,6 @@ export class Parser {
 
         if (
             this.currentToken().type === TokenType.EQUAL_EQUAL
-            // || this.currentToken().type === TokenType.LESS_THAN
-            // || this.currentToken().type === TokenType.GREATER_THAN
         ) {
             this.moveToNextToken();
             this.ignoreSpaces();
@@ -237,6 +240,76 @@ export class Parser {
             }
 
             return new EqualNode(
+                t1,
+                t2
+            );
+        } else if (
+            this.currentToken().type === TokenType.NOT_EQUAL
+        ) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            let t2 = this.term(isInMatrix);
+            if (t2 instanceof MError) {
+                return t2;
+            }
+
+            return new NotEqualNode(
+                t1,
+                t2
+            );
+        } else if (
+            this.currentToken().type === TokenType.LESS
+        ) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            let t2 = this.term(isInMatrix);
+            if (t2 instanceof MError) {
+                return t2;
+            }
+
+            return new LessThanNode(
+                t1,
+                t2
+            );
+        } else if (
+            this.currentToken().type === TokenType.LESS_OR_EQUAL
+        ) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            let t2 = this.term(isInMatrix);
+            if (t2 instanceof MError) {
+                return t2;
+            }
+
+            return new LessOrEqualNode(
+                t1,
+                t2
+            );
+        } else if (
+            this.currentToken().type === TokenType.GREATER
+        ) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            let t2 = this.term(isInMatrix);
+            if (t2 instanceof MError) {
+                return t2;
+            }
+
+            return new GreaterThanNode(
+                t1,
+                t2
+            );
+        } else if (
+            this.currentToken().type === TokenType.GREATER_OR_EQUAL
+        ) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            let t2 = this.term(isInMatrix);
+            if (t2 instanceof MError) {
+                return t2;
+            }
+
+            return new GreaterOrEqualNode(
                 t1,
                 t2
             );

@@ -62,6 +62,39 @@ export class Lexer {
                 } else {
                     tokens.push(new Token(TokenType.EQUAL, "=", newPosition));
                 }
+            } else if (currentChar === ">") {
+                this.currentIndex++;
+                newPosition.addToPosition();
+
+                if (this.currentChar() === "=") {
+                    this.currentIndex++;
+                    newPosition.addToPosition();
+                    tokens.push(new Token(TokenType.GREATER_OR_EQUAL, ">=", newPosition));
+                } else {
+                    tokens.push(new Token(TokenType.GREATER, ">", newPosition));
+                }
+            } else if (currentChar === "<") {
+                this.currentIndex++;
+                newPosition.addToPosition();
+
+                if (this.currentChar() === "=") {
+                    this.currentIndex++;
+                    newPosition.addToPosition();
+                    tokens.push(new Token(TokenType.LESS_OR_EQUAL, "<=", newPosition));
+                } else {
+                    tokens.push(new Token(TokenType.LESS, "<", newPosition));
+                }
+            } else if (currentChar === "!") {
+                this.currentIndex++;
+                newPosition.addToPosition();
+
+                if (this.currentChar() === "=") {
+                    this.currentIndex++;
+                    newPosition.addToPosition();
+                    tokens.push(new Token(TokenType.NOT_EQUAL, "!=", newPosition));
+                } else {
+                    tokens.push(new Token(TokenType.NOT, "!", newPosition));
+                }
             } else if (isOperator(currentChar)) {
                 this.currentIndex++;
                 newPosition.addToPosition();

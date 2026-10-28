@@ -80,6 +80,52 @@ export class MAtom {
         return new MAtom(0, 0, null, false)
     }
 
+    notEquals(n: MAtom) {
+        if (
+            Math.abs(this.real - n.real) < 1e-13 &&
+            Math.abs(this.imaginary - n.imaginary) < 1e-13
+        ) {
+            return new MAtom(0, 0, null, false)
+        }
+        return new MAtom(1, 0, null, false)
+    }
+
+    lessThan(n: MAtom) {
+        return new MAtom(
+            this.real < n.real ? 1 : 0,
+            0,
+            null,
+            false
+        );
+    }
+
+    lessThanOrEqual(n: MAtom) {
+        return new MAtom(
+            (this.lessThan(n).real === 1 || this.equals(n).real === 1) ? 1 : 0,
+            0,
+            null,
+            false
+        );
+    }
+
+    greaterThan(n: MAtom) {
+        return new MAtom(
+            this.real > n.real ? 1 : 0,
+            0,
+            null,
+            false
+        );
+    }
+
+    greaterThanOrEqual(n: MAtom) {
+        return new MAtom(
+            (this.greaterThan(n).real === 1 || this.equals(n).real === 1) ? 1 : 0,
+            0,
+            null,
+            false
+        );
+    }
+
     hasImaginary() {
         return Math.abs(this.imaginary) > 1e-13;
     }
