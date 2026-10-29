@@ -3,6 +3,7 @@ import {isAlpha, isAlphaNumeric, isBoolean, isDigit, isNewline, isOperator} from
 import {Position} from "../../model/position";
 import {TokenType} from "../../model/tokenType";
 import {MError} from "../data_models/MError";
+import {isKeyword} from "../../utils/identifier_type_tester";
 
 export class Lexer {
     input: string;
@@ -40,11 +41,11 @@ export class Lexer {
                 let numToken = this.generateNumberToken();
                 this.currentIndex = numToken.position!.posEnd;
                 tokens.push(numToken);
-            } else if (currentChar === 'i') {
+            }/* else if (currentChar === 'i') {
                 this.currentIndex++;
                 newPosition.addToPosition();
                 tokens.push(new Token(TokenType.I_NUMBER, "1", newPosition));
-            } else if (isAlpha(currentChar) || currentChar === '_') {
+            }*/ else if (isAlpha(currentChar) || currentChar === '_') {
                 tokens.push(this.generateIdentifierToken());
             } else if (isNewline(currentChar)) {
                 this.currentIndex++
@@ -228,7 +229,19 @@ export class Lexer {
             this.currentIndex++;
             newPosition.addToPosition();
         }
-        if (isBoolean(id)) {
+        if (id === "i") {
+            return new Token(
+                TokenType.I_NUMBER,
+                "1",
+                newPosition
+            );
+        } else if (isKeyword(id)) {
+            return new Token(
+                TokenType.KEYWORD,
+                id,
+                newPosition
+            );
+        } else if (isBoolean(id)) {
             return new Token(
                 TokenType.BOOLEAN,
                 id,

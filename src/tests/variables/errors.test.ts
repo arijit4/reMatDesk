@@ -23,4 +23,10 @@ describe('Scalar arithmetics errors', () => {
         let result = getResult("x + y");
         expect(result).toBeInstanceOf(MError);
     });
+
+    // TODO
+    // test('invalid var name', () => {
+    //     let result = getResult("2x = 5");
+    //     expect(result).toBeInstanceOf(MError);
+    // });
 });

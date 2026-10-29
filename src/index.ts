@@ -2,9 +2,17 @@ import {Lexer} from "./compiler/engine/lexer";
 import {Parser} from "./compiler/engine/parser";
 import {Executor} from "./compiler/engine/executor";
 import {MError} from "./compiler/data_models/MError";
-import {MNumberBuilder} from "./compiler/data_models/MNumberBuilder";
+import {SymbolTable} from "./model/symbol_table";
+import {MNumber} from "./compiler/data_models/MNumber";
 
-let input = "[2 [3; 5]; 4]";
+let input =
+    `if pi < 3
+         x = 1
+         y = 2
+         
+         z = x + y - pi
+    `;
+// input = "x = y = 2"
 
 let lexer = new Lexer(input);
 
@@ -17,17 +25,19 @@ if (tokens instanceof MError) {
 } else {
     let parser = new Parser(tokens);
 
-    let executor = new Executor();
+    let symbolTable = new SymbolTable();
+    let executor = new Executor(symbolTable);
 
-    let x = parser.term(false);
+    let x = parser.generateAST();
     // console.log(JSON.stringify(x, null, 2));
     let result = executor.execute(x);
     if (result instanceof MError) {
         console.log("========== Executor Error =========");
         console.log(result.stringify(input));
-    } else if (result instanceof MNumberBuilder) {
-        console.log(result.toString());
     } else {
-        result.print();
+        if (result instanceof MNumber) {
+            result.print();
+        }
+        console.log(symbolTable.stringify(true));
     }
 }

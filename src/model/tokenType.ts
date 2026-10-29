@@ -1,6 +1,7 @@
 export class TokenType {
     public static readonly NUMBER = "NUMBER";
     public static readonly I_NUMBER = "I_NUMBER";
+    public static readonly KEYWORD = "KEYWORD";
 
     public static readonly IDENTIFIER = "IDENTIFIER";
     public static readonly BOOLEAN = "BOOLEAN";

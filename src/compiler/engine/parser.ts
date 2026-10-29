@@ -19,6 +19,8 @@ import {LessThanNode} from "../nodes/comparisons/less_than_node";
 import {GreaterThanNode} from "../nodes/comparisons/greater_than_node";
 import {LessOrEqualNode} from "../nodes/comparisons/less_or_equal_node";
 import {GreaterOrEqualNode} from "../nodes/comparisons/greater_or_equal_node";
+import {KeywordType} from "../../model/keywordType";
+import {ConditionBlock, IfElseNode} from "../nodes/condtions/if_else_node";
 
 export class Parser {
     public tokens: Token[];
@@ -44,10 +46,187 @@ export class Parser {
                 this.comparison(false),
                 currentToken.position
             )
+        } else if (currentToken.type === TokenType.KEYWORD && currentToken.value === KeywordType.IF) {
+            // no `moveToNextToken() as we have already advanced to the 2nd token
+            return this.generateIfElseBlock();
         } else {
             this.currentIndex = lastValidIndex;
             return this.comparison(false);
         }
+    }
+
+    private getMatrix() {
+        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
+            let n = new MNumberBuilder();
+            this.moveToNextToken();
+            this.ignoreSpaces();
+
+            while (
+                this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN
+                && this.currentToken().type !== TokenType.EOF
+                ) {
+                // let a = this.term(true);
+                let a = this.comparison(true);
+                if (a instanceof MError) {
+                    return a;
+                }
+                n.push(a);
+                this.moveToNextToken();
+                this.ignoreSpaces();
+
+                if (this.currentToken().type === TokenType.COMMA) {
+                    this.moveToNextToken();
+                    this.ignoreSpaces();
+                }
+                if (this.currentToken().type === TokenType.SEMICOLON) {
+                    n.addRow();
+                    this.moveToNextToken();
+                    this.ignoreSpaces();
+                }
+            }
+            if (this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN) {
+                return new MError(
+                    "Expected a closing square parenthesis",
+                    this.currentToken().position
+                );
+            }
+            return n;
+        }
+        return new MError(
+            "Expected a matrix",
+            this.currentToken().position
+        );
+    }
+
+    private getNumber(): FactorType {
+        if (this.currentToken().type === TokenType.EQUAL_EQUAL) {
+            return new MError(
+                `invalid '${this.currentToken().value}' operation`,
+                this.currentToken().position
+            );
+        }
+        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
+            return this.getMatrix();
+        }
+        let sign = new MNumber(
+            new MAtom(
+                1,
+                0,
+                this.currentToken().position
+            )
+        );
+        let number_of_prefix_signs = 0;
+        while (
+            this.currentToken().type === TokenType.PLUS
+            || this.currentToken().type === TokenType.MINUS
+            ) {
+            if (this.currentToken().type === TokenType.MINUS) {
+                sign.matrix[0][0].real *= -1;
+            }
+            number_of_prefix_signs++;
+            this.moveToNextToken();
+            this.ignoreSpaces();
+        }
+        let n: FactorType;
+        if (this.currentToken().type === TokenType.NUMBER) {
+            n = new MNumber(
+                new MAtom(
+                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
+                    0,
+                    this.currentToken().position
+                )
+            );
+        } else if (this.currentToken().type === TokenType.I_NUMBER) {
+            n = new MNumber(
+                new MAtom(
+                    0,
+                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
+                    this.currentToken().position
+                )
+            );
+        } else if (this.currentToken().type === TokenType.IDENTIFIER) {
+            n = new MultiplyNode(
+                sign,
+                new VarAccessNode(
+                    this.currentToken().value,
+                    this.currentToken().position
+                )
+            );
+        } else if (this.currentToken().type === TokenType.BOOLEAN) {
+            if (number_of_prefix_signs > 0) {
+                return new MError(
+                    "invalid boolean sign",
+                    this.currentToken().position
+                );
+            }
+            n = new MNumber(
+                new MAtom(
+                    this.currentToken().value === KeywordType.TRUE ? 1 : 0,
+                    0,
+                    this.currentToken().position
+                )
+            );
+        } else if (this.currentToken().type !== TokenType.EOF) {
+            n = new MultiplyNode(
+                this.parenthesisFactor(false),
+                sign
+            )
+        } else {
+            return new MError(
+                "Expected a number",
+                this.currentToken().position
+            );
+        }
+        let lastValidIndex = this.currentIndex;
+        this.moveToNextToken();
+        this.ignoreSpaces();
+        if (this.currentToken().type !== TokenType.COLON) {
+            this.currentIndex = lastValidIndex;
+            return n;
+        }
+
+        while (this.currentToken().type === TokenType.COLON) {
+            this.moveToNextToken();
+            this.ignoreSpaces();
+
+            // let n2 = this.term(true);
+            let n2 = this.comparison(true);
+            if (n2 instanceof MError) {
+                return n2;
+            }
+
+            if (n2 instanceof MatrixRangeNode) {
+                if (n instanceof MatrixRangeNode) {
+                    return new MError(
+                        "both are range; should not reach here"
+                    )
+                } else {
+                    if (n2.step !== null) {
+                        return new MError(
+                            "invalid matrix construction",
+                            this.currentToken().position
+                        )
+                    }
+                    n = new MatrixRangeNode(n, n2.start, n2.end);
+                }
+            } else {
+                if (n instanceof MatrixRangeNode) {
+                    return new MError(
+                        "n range, n2 num; should not reach here"
+                    )
+                } else {
+                    n = new MatrixRangeNode(n, n2)
+                }
+            }
+            let lastValidIndex = this.currentIndex;
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            if (this.currentToken().type !== TokenType.COLON) {
+                this.currentIndex = lastValidIndex;
+                return n;
+            }
+        }
+        return n;
     }
 
     public parenthesisFactor(isInMatrix: boolean): TermType {
@@ -330,187 +509,62 @@ export class Parser {
         this.currentIndex--;
     }
 
+    public generateIfElseBlock(): MError | IfElseNode {
+        let condition = this.comparison(false);
+        if (condition instanceof MError) {
+            return condition;
+        }
+        this.moveToNextToken();
+        this.ignoreSpacesAndNewlines();
+
+        let ifConditionBlock = new ConditionBlock(condition);
+        // fine till here
+
+        while (
+            this.currentIndex < this.tokens.length - 2
+            && (
+                this.currentToken().value !== KeywordType.ELSEIF ||
+                this.currentToken().value !== KeywordType.ELSE ||
+                this.currentToken().value !== KeywordType.END
+            )
+            ) {
+            let statement: FactorType | IfElseNode | MError = this.generateAST();
+            if (statement instanceof MError) {
+                return statement;
+            }
+            console.log(statement);
+            ifConditionBlock.addStatements(statement);
+            this.moveToNextToken();
+            this.ignoreSpacesAndNewlines();
+        }
+        if (this.currentToken().type === TokenType.KEYWORD && this.currentToken().value === KeywordType.END) {
+            let ifElseNode = new IfElseNode([ifConditionBlock], null);
+            return ifElseNode;
+        }
+
+
+        // while (this.currentToken().type === TokenType.KEYWORD && this.currentToken().value === KeywordType.ELSEIF) {
+        //     this.ignoreSpaces();
+        //     let elseifCondition = this.comparison(false);
+        //     if (elseifCondition instanceof MError) {
+        //         return elseifCondition;
+        //     }
+        //     ifElseNode.addElseIfBlock(new ConditionBlock(elseifCondition));
+        // }
+
+        return new MError(
+            "Invalid conditional expression; expected 'elseif', 'else' or 'end'",
+            this.currentToken().position
+        );
+    }
+
+    // ============ Private Helper Methods ============
     public lookupNextToken() {
         try {
             return this.tokens[this.currentIndex + 1];
         } catch (error) {
             return null;
         }
-    }
-
-    // ============ Private Methods ============
-    private getMatrix() {
-        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
-            let n = new MNumberBuilder();
-            this.moveToNextToken();
-            this.ignoreSpaces();
-
-            while (
-                this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN
-                && this.currentToken().type !== TokenType.EOF
-                ) {
-                // let a = this.term(true);
-                let a = this.comparison(true);
-                if (a instanceof MError) {
-                    return a;
-                }
-                n.push(a);
-                this.moveToNextToken();
-                this.ignoreSpaces();
-
-                if (this.currentToken().type === TokenType.COMMA) {
-                    this.moveToNextToken();
-                    this.ignoreSpaces();
-                }
-                if (this.currentToken().type === TokenType.SEMICOLON) {
-                    n.addRow();
-                    this.moveToNextToken();
-                    this.ignoreSpaces();
-                }
-            }
-            if (this.currentToken().type !== TokenType.RIGHT_SQUARE_PAREN) {
-                return new MError(
-                    "Expected a closing square parenthesis",
-                    this.currentToken().position
-                );
-            }
-            return n;
-        }
-        return new MError(
-            "Expected a matrix",
-            this.currentToken().position
-        );
-    }
-
-    private getNumber(): FactorType {
-        if (this.currentToken().type === TokenType.EQUAL_EQUAL) {
-            return new MError(
-                `invalid '${this.currentToken().value}' operation`,
-                this.currentToken().position
-            );
-        }
-        if (this.currentToken().type === TokenType.LEFT_SQUARE_PAREN) {
-            return this.getMatrix();
-        }
-        let sign = new MNumber(
-            new MAtom(
-                1,
-                0,
-                this.currentToken().position
-            )
-        );
-        let number_of_prefix_signs = 0;
-        while (
-            this.currentToken().type === TokenType.PLUS
-            || this.currentToken().type === TokenType.MINUS
-            ) {
-            if (this.currentToken().type === TokenType.MINUS) {
-                sign.matrix[0][0].real *= -1;
-            }
-            number_of_prefix_signs++;
-            this.moveToNextToken();
-            this.ignoreSpaces();
-        }
-        let n: FactorType;
-        if (this.currentToken().type === TokenType.NUMBER) {
-            n = new MNumber(
-                new MAtom(
-                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
-                    0,
-                    this.currentToken().position
-                )
-            );
-        } else if (this.currentToken().type === TokenType.I_NUMBER) {
-            n = new MNumber(
-                new MAtom(
-                    0,
-                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
-                    this.currentToken().position
-                )
-            );
-        } else if (this.currentToken().type === TokenType.IDENTIFIER) {
-            n = new MultiplyNode(
-                sign,
-                new VarAccessNode(
-                    this.currentToken().value,
-                    this.currentToken().position
-                )
-            );
-        } else if (this.currentToken().type === TokenType.BOOLEAN) {
-            if (number_of_prefix_signs > 0) {
-                return new MError(
-                    "invalid boolean sign",
-                    this.currentToken().position
-                );
-            }
-            n = new MNumber(
-                new MAtom(
-                    this.currentToken().value === "true" ? 1 : 0,
-                    0,
-                    this.currentToken().position
-                )
-            );
-        } else if (this.currentToken().type !== TokenType.EOF) {
-            n = new MultiplyNode(
-                this.parenthesisFactor(false),
-                sign
-            )
-        } else {
-            return new MError(
-                "Expected a number",
-                this.currentToken().position
-            );
-        }
-        let lastValidIndex = this.currentIndex;
-        this.moveToNextToken();
-        this.ignoreSpaces();
-        if (this.currentToken().type !== TokenType.COLON) {
-            this.currentIndex = lastValidIndex;
-            return n;
-        }
-
-        while (this.currentToken().type === TokenType.COLON) {
-            this.moveToNextToken();
-            this.ignoreSpaces();
-
-            // let n2 = this.term(true);
-            let n2 = this.comparison(true);
-            if (n2 instanceof MError) {
-                return n2;
-            }
-
-            if (n2 instanceof MatrixRangeNode) {
-                if (n instanceof MatrixRangeNode) {
-                    return new MError(
-                        "both are range; should not reach here"
-                    )
-                } else {
-                    if (n2.step !== null) {
-                        return new MError(
-                            "invalid matrix construction",
-                            this.currentToken().position
-                        )
-                    }
-                    n = new MatrixRangeNode(n, n2.start, n2.end);
-                }
-            } else {
-                if (n instanceof MatrixRangeNode) {
-                    return new MError(
-                        "n range, n2 num; should not reach here"
-                    )
-                } else {
-                    n = new MatrixRangeNode(n, n2)
-                }
-            }
-            let lastValidIndex = this.currentIndex;
-            this.moveToNextToken();
-            this.ignoreSpaces();
-            if (this.currentToken().type !== TokenType.COLON) {
-                this.currentIndex = lastValidIndex;
-                return n;
-            }
-        }
-        return n;
     }
 
     private getPowerOperator() {
@@ -559,6 +613,18 @@ export class Parser {
 
     private ignoreSpaces() {
         while (this.currentIndex < this.tokens.length - 2 && this.currentToken().type === TokenType.SPACE) {
+            this.moveToNextToken();
+        }
+    }
+
+    private ignoreSpacesAndNewlines() {
+        while (
+            this.currentIndex < this.tokens.length - 2
+            && (
+                this.currentToken().type === TokenType.SPACE
+                || this.currentToken().type === TokenType.NEWLINE
+            )
+            ) {
             this.moveToNextToken();
         }
     }

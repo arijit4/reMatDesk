@@ -1,15 +1,15 @@
-import {ParserNode} from "../../centralTypes";
+import {FactorType} from "../../centralTypes";
 import {MNumber} from "../../data_models/MNumber";
 import {MError} from "../../data_models/MError";
 import {Executor} from "../../engine/executor";
 
 export class PowerNode {
-    left: ParserNode;
-    right: ParserNode;
+    left: FactorType;
+    right: FactorType;
 
     constructor(
-        left: ParserNode,
-        right: ParserNode
+        left: FactorType,
+        right: FactorType
     ) {
         this.left = left;
         this.right = right;
@@ -36,12 +36,12 @@ export class PowerNode {
 }
 
 export class DotPowerNode {
-    left: ParserNode;
-    right: ParserNode;
+    left: FactorType;
+    right: FactorType;
 
     constructor(
-        left: ParserNode,
-        right: ParserNode
+        left: FactorType,
+        right: FactorType
     ) {
         this.left = left;
         this.right = right;

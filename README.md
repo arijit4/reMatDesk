@@ -26,10 +26,7 @@ purely written in TypeScript, it can also be made to run in the browser as well.
   - Assignment
   - Accessing
 - Comparisons
-  - Equal
-  - Not equal
-  - Greater than
-  - Less than
-  - Greater than or equal to
-  - Less than or equal to
+  - `==`,`!=`, `>`, `<`, `>=`, `<=`
+- Control flow
+  - If statements
 - Error messages

@@ -1,15 +1,15 @@
 import {MNumber} from "../../data_models/MNumber";
-import {ParserNode} from "../../centralTypes";
+import {FactorType} from "../../centralTypes";
 import {MError} from "../../data_models/MError";
 import {Executor} from "../../engine/executor";
 
 export class MinusNode {
-    left: ParserNode;
-    right: ParserNode;
+    left: FactorType;
+    right: FactorType;
 
     constructor(
-        left: ParserNode,
-        right: ParserNode,
+        left: FactorType,
+        right: FactorType,
     ) {
         this.left = left;
         this.right = right;

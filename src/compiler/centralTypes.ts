@@ -9,59 +9,29 @@ import {MNumberBuilder} from "./data_models/MNumberBuilder";
 import {MatrixRangeNode} from "./nodes/arithmetics/matrix_range_node";
 import {VarAccessNode} from "./nodes/variables/var_access_node";
 import {VarAssignmentNode} from "./nodes/variables/var_assignment_node";
+import {IfElseNode} from "./nodes/condtions/if_else_node";
 
-export type ParserNode =
-    MNumber
-    | MNumberBuilder
-    | MatrixRangeNode
-    | VarAccessNode
-    | VarAssignmentNode
-    | MError
-    | PowerNode
-    | PlusNode
-    | MinusNode
-    | MultiplyNode
-    | DivisionNode
-    | DotPowerNode
-    | DotMultiplyNode
-    | DotDivisionNode;
-
-export type PowerFactorType =
-    MError
-    | VarAccessNode
-    | VarAssignmentNode
-    | MNumberBuilder
-    | MatrixRangeNode
-    | MNumber
-    | PowerNode
-    | DotPowerNode
 
 export type FactorType =
     MError
+    | MNumber
     | MNumberBuilder
     | MatrixRangeNode
     | VarAccessNode
     | VarAssignmentNode
-    | MNumber
     | PowerNode
-    | MultiplyNode
-    | DivisionNode
     | DotPowerNode
-    | DotMultiplyNode
-    | DotDivisionNode;
-
-export type TermType =
-    MError
-    | MNumber
-    | MNumberBuilder
-    | VarAccessNode
-    | VarAssignmentNode
-    | MatrixRangeNode
-    | PowerNode
     | PlusNode
     | MinusNode
     | MultiplyNode
-    | DivisionNode
-    | DotPowerNode
     | DotMultiplyNode
+    | DivisionNode
     | DotDivisionNode;
+
+export type TermType = FactorType
+export type PowerFactorType = FactorType
+
+export type ParserNode =
+    FactorType
+    | IfElseNode;
+

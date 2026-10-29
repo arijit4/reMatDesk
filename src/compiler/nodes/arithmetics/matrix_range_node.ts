@@ -1,4 +1,4 @@
-import {ParserNode, TermType} from "../../centralTypes";
+import {TermType} from "../../centralTypes";
 import {Executor} from "../../engine/executor";
 import {MNumber} from "../../data_models/MNumber";
 import {MAtom} from "../../data_models/MAtom";
