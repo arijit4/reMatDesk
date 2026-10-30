@@ -11,8 +11,8 @@ export class SymbolTable {
         this.add("pi", new MNumber(new MAtom(Math.PI, 0, null, true)));
         this.add("e", new MNumber(new MAtom(Math.exp(1), 0, null, true)));
 
-        this.add("true", new MNumber(new MAtom(1, 0, null, true)));
-        this.add("false", new MNumber(new MAtom(0, 0, null, true)));
+        this.add("true", MNumber.True());
+        this.add("false", MNumber.False());
     }
 
     add(key: string, value: MNumber) {
