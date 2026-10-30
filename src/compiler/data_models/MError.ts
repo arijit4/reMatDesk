@@ -1,4 +1,5 @@
 import {Position} from "../../model/position";
+import {Executor} from "../engine/executor";
 
 export class MError {
     public message: string;
@@ -38,7 +39,8 @@ export class MError {
         }
     }
 
-    public execute() {
+    public execute(e: Executor) {
+        e.appendOutput(this.stringify(e.input));
         return this;
     }
 }

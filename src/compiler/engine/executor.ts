@@ -6,9 +6,10 @@ import {MNumber} from "../data_models/MNumber";
 export class Executor {
     public symbolTable: SymbolTable;
     public input: string = "";
-    public output: string = "";
+    private output: string = "";
 
     constructor(input: string, symbolTable: SymbolTable) {
+        this.input = input;
         this.symbolTable = symbolTable;
     }
 
@@ -26,7 +27,8 @@ export class Executor {
         for (let i = 0; i < node.length; i++) {
             let res = this.execute(node[i]);
             if (res instanceof MError) {
-                return res;
+                this.appendOutput(res.stringify(this.input));
+                return MNumber.False();
             }
         }
         return MNumber.True();
@@ -35,5 +37,9 @@ export class Executor {
     appendOutput(str: string) {
         this.output += "\n";
         this.output += str;
+    }
+
+    getOutput() {
+        return this.output.trim();
     }
 }

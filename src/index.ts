@@ -3,7 +3,6 @@ import {Parser} from "./compiler/engine/parser";
 import {Executor} from "./compiler/engine/executor";
 import {MError} from "./compiler/data_models/MError";
 import {SymbolTable} from "./model/symbol_table";
-import {MNumber} from "./compiler/data_models/MNumber";
 import {readFileSync} from "fs";
 
 let input = readFileSync("../reMatDesk/src/input.m", "utf8")
@@ -26,16 +25,11 @@ if (tokens instanceof MError) {
 
     let x = parser.generateInterpretableAST();
     // console.log(JSON.stringify(x, null, 2));
-    let result = executor.executeInterpretableAST(x);
-    if (result instanceof MError) {
-        console.log("========== Executor Error =========");
-        console.log(result.stringify(input));
-    } else {
-        if (result instanceof MNumber) {
-            console.log(result.print());
-        }
-        console.log(symbolTable.stringify(true));
-    }
+    let ranWithoutError = executor.executeInterpretableAST(x).isTrue();
+    console.log("Error occurred? => ", !ranWithoutError);
+
+    console.log("========== Symbol Table =========");
+    console.log(symbolTable.stringify(true));
     console.log("========== Output =========");
-    console.log(executor.output);
+    console.log(executor.getOutput());
 }

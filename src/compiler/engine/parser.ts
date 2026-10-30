@@ -133,8 +133,14 @@ export class Parser {
     }
 
     private getNumber(): FactorType {
-        this.ignoreSpacesAndNewlines();
-        if (this.currentToken().type === TokenType.EOF) {
+        // console.log(this.currentToken())
+        this.ignoreSpaces();
+        if (
+            [
+                TokenType.EOF,
+                TokenType.SEMICOLON,
+                TokenType.EQUAL
+            ].includes(this.currentToken().type)) {
             return new MError(
                 "Expected a number",
                 this.currentToken().position
