@@ -22,7 +22,7 @@ if (tokens instanceof MError) {
     let parser = new Parser(tokens);
 
     let symbolTable = new SymbolTable();
-    let executor = new Executor(symbolTable);
+    let executor = new Executor(input, symbolTable);
 
     let x = parser.generateAST();
     // console.log(JSON.stringify(x, null, 2));
@@ -32,7 +32,7 @@ if (tokens instanceof MError) {
         console.log(result.stringify(input));
     } else {
         if (result instanceof MNumber) {
-            result.print();
+            console.log(result.print());
         }
         console.log(symbolTable.stringify(true));
     }

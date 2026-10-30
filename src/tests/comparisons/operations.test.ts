@@ -1,28 +1,10 @@
-import {Lexer} from "../../compiler/engine/lexer";
-import {MError} from "../../compiler/data_models/MError";
-import {Parser} from "../../compiler/engine/parser";
-import {Executor} from "../../compiler/engine/executor";
-import {SymbolTable} from "../../model/symbol_table";
 import {MNumber} from "../../compiler/data_models/MNumber";
-
-function getResult(input: string) {
-    let lexer = new Lexer(input);
-    let tokens = lexer.tokenize();
-    if (tokens instanceof MError) {
-        return tokens;
-    }
-    let parser = new Parser(tokens);
-    let x = parser.comparison(false);
-
-    let syntaxTable = new SymbolTable();
-    let executor = new Executor(syntaxTable);
-    return executor.execute(x!);
-}
+import {getResult} from "../testRunner";
 
 describe('Equality operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 == 27");
+        let result = getResult("3^3 == 27").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1);
@@ -30,7 +12,7 @@ describe('Equality operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] == [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] == [ 1 2; 3 4]").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -50,7 +32,7 @@ describe('Equality operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 == 28");
+        let result = getResult("3^3 == 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -58,7 +40,7 @@ describe('Equality operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi == (-pi) + 1");
+        let result = getResult("1 - pi == (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1, 6);
@@ -66,7 +48,7 @@ describe('Equality operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) == (-pi) + 1");
+        let result = getResult("(1 - pi) == (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1, 6);
@@ -78,7 +60,7 @@ describe('Equality operations', () => {
 describe('Inequality operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 ~= 27");
+        let result = getResult("3^3 ~= 27").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -86,7 +68,7 @@ describe('Inequality operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] ~= [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] ~= [ 1 2; 3 4]").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -106,7 +88,7 @@ describe('Inequality operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 ~= 28");
+        let result = getResult("3^3 ~= 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1);
@@ -114,7 +96,7 @@ describe('Inequality operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi ~= (-pi) + 1");
+        let result = getResult("1 - pi ~= (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -122,7 +104,7 @@ describe('Inequality operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) ~= (-pi) + 1");
+        let result = getResult("(1 - pi) ~= (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -134,7 +116,7 @@ describe('Inequality operations', () => {
 describe('Less than operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 < 28");
+        let result = getResult("3^3 < 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1);
@@ -142,7 +124,7 @@ describe('Less than operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] < [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] < [ 1 2; 3 4]").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -162,7 +144,7 @@ describe('Less than operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 < 28");
+        let result = getResult("3^3 < 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(1);
@@ -170,7 +152,7 @@ describe('Less than operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi < (-pi) + 1");
+        let result = getResult("1 - pi < (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -178,7 +160,7 @@ describe('Less than operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) < (-pi) + 1");
+        let result = getResult("(1 - pi) < (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -190,7 +172,7 @@ describe('Less than operations', () => {
 describe('Less than or equal operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 == 27");
+        let result = getResult("3^3 == 27").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1);
@@ -198,7 +180,7 @@ describe('Less than or equal operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] == [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] == [ 1 2; 3 4]").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -218,7 +200,7 @@ describe('Less than or equal operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 == 28");
+        let result = getResult("3^3 == 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -226,7 +208,7 @@ describe('Less than or equal operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi == (-pi) + 1");
+        let result = getResult("1 - pi == (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1, 6);
@@ -234,7 +216,7 @@ describe('Less than or equal operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) == (-pi) + 1");
+        let result = getResult("(1 - pi) == (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1, 6);
@@ -246,7 +228,7 @@ describe('Less than or equal operations', () => {
 describe('Greater than operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 > 27");
+        let result = getResult("3^3 > 27").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -254,7 +236,7 @@ describe('Greater than operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] > [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] > [ 1 2; 3 4]").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -274,7 +256,7 @@ describe('Greater than operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 > 28");
+        let result = getResult("3^3 > 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -282,7 +264,7 @@ describe('Greater than operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi > (-pi) + 1");
+        let result = getResult("1 - pi > (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe( 0);
@@ -290,7 +272,7 @@ describe('Greater than operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) > (-pi) + 1");
+        let result = getResult("(1 - pi) > (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -302,7 +284,7 @@ describe('Greater than operations', () => {
 describe('Greater than or equal operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 >= 27");
+        let result = getResult("3^3 >= 27").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1);
@@ -310,7 +292,7 @@ describe('Greater than or equal operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] >= [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] >= [ 1 2; 3 4]").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -330,7 +312,7 @@ describe('Greater than or equal operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 >= 28");
+        let result = getResult("3^3 >= 28").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -338,7 +320,7 @@ describe('Greater than or equal operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi >= (-pi) + 1");
+        let result = getResult("1 - pi >= (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1, 6);
@@ -346,7 +328,7 @@ describe('Greater than or equal operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) >= (-pi) + 1");
+        let result = getResult("(1 - pi) >= (-pi) + 1").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1, 6);

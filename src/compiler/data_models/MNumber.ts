@@ -54,13 +54,16 @@ export class MNumber {
     }
 
     print() {
+        let output = "";
         for (let i = 0; i < this.dimensions.row; i++) {
             let row = this.matrix[i];
             let rowString = row.map(
                 atom => `${atom.real}${atom.imaginary !== 0 ? ` + ${atom.imaginary === 1 ? '' : atom.imaginary}i` : ''}`
             ).join('\t');
-            console.log(`\t${rowString}`);
+            output += `\t${rowString}\n`;
         }
+        // console.log(output);
+        return output;
     }
 
     add(other: MNumber): MNumber | MError {

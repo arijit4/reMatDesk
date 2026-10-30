@@ -4,8 +4,10 @@ import {SymbolTable} from "../../model/symbol_table";
 
 export class Executor {
     public symbolTable: SymbolTable;
+    public input: string = "";
+    public output: string = "";
 
-    constructor(symbolTable: SymbolTable) {
+    constructor(input: string, symbolTable: SymbolTable) {
         this.symbolTable = symbolTable;
     }
 
@@ -13,7 +15,12 @@ export class Executor {
         if (node instanceof MError) {
             return node;
         }
-        let mini_executor = new Executor(this.symbolTable);
+        let mini_executor = new Executor(this.input, this.symbolTable);
         return node.execute(mini_executor);
+    }
+
+    appendOutput(str: string) {
+        this.output += "\n";
+        this.output += str;
     }
 }

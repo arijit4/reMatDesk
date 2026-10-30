@@ -10,7 +10,7 @@ export function getResult(input: string): { executor: Executor, result: MNumber 
     let tokens = lexer.tokenize();
 
     let syntaxTable = new SymbolTable();
-    let executor = new Executor(syntaxTable);
+    let executor = new Executor(input, syntaxTable);
 
     if (tokens instanceof MError) {
         return {executor: executor, result: tokens};

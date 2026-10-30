@@ -1,24 +1,6 @@
-import {Executor} from "../../compiler/engine/executor";
-import {Parser} from "../../compiler/engine/parser";
-import {Lexer} from "../../compiler/engine/lexer";
 import {MNumber} from "../../compiler/data_models/MNumber";
-import {MError} from "../../compiler/data_models/MError";
-import {SymbolTable} from "../../model/symbol_table";
+import {getResult} from "../testRunner";
 
-function getResult(input: string) {
-    let lexer = new Lexer(input);
-    let tokens = lexer.tokenize();
-    if (tokens instanceof MError) {
-        return tokens;
-    }
-    let parser = new Parser(tokens);
-    // let x = parser.term(false);
-    let x = parser.comparison(false);
-
-    let syntaxTable = new SymbolTable();
-    let executor = new Executor(syntaxTable);
-    return executor.execute(x!);
-}
 
 function round(num: number, place: number = 8) {
     const factor = Math.pow(10, place);
@@ -28,7 +10,7 @@ function round(num: number, place: number = 8) {
 describe('Scalar arithmetics', () => {
     // addition
     test('adds 3 numbers correctly', () => {
-        let result  = getResult("2 + 3 + 4");
+        let result  = getResult("2 + 3 + 4").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 + 3 + 4);
@@ -36,7 +18,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('adds 3 imaginary numbers correctly', () => {
-        let result = getResult("2i + 3i + 4i");
+        let result = getResult("2i + 3i + 4i").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -45,7 +27,7 @@ describe('Scalar arithmetics', () => {
     });
     // subtraction
     test('subtracts 3 numbers correctly', () => {
-        let result = getResult("2 - 3 - 4");
+        let result = getResult("2 - 3 - 4").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 - 3 - 4);
@@ -53,7 +35,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('subtracts 3 imaginary numbers correctly', () => {
-        let result = getResult("2i - 3i - 4i");
+        let result = getResult("2i - 3i - 4i").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -62,7 +44,7 @@ describe('Scalar arithmetics', () => {
     });
     // multiplication
     test('multiplies 3 scalar numbers correctly', () => {
-        let result = getResult("2 * 3 * 4");
+        let result = getResult("2 * 3 * 4").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 * 3 * 4);
@@ -70,7 +52,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('multiplies 3 imaginary numbers correctly', () => {
-        let result = getResult("2i * 3i * 4i");
+        let result = getResult("2i * 3i * 4i").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -78,7 +60,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('multiplication with parenthesis', () => {
-        let result = getResult("2 + (4 * 6)");
+        let result = getResult("2 + (4 * 6)").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 + (4 * 6));
@@ -87,7 +69,7 @@ describe('Scalar arithmetics', () => {
     });
     // division
     test('divides 3 scalar numbers correctly', () => {
-        let result = getResult("2 / 3 / 4");
+        let result = getResult("2 / 3 / 4").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 / 3 / 4);
@@ -95,7 +77,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('divides 3 imaginary numbers correctly', () => {
-        let result = getResult("2i / 3i / 4i");
+        let result = getResult("2i / 3i / 4i").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -103,7 +85,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('division with parenthesis', () => {
-        let result = getResult("2/ (4 / 6)");
+        let result = getResult("2/ (4 / 6)").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(2 / (4 / 6));
@@ -112,7 +94,7 @@ describe('Scalar arithmetics', () => {
     });
     // power
     test('powers 3 scalar numbers correctly', () => {
-        let result = getResult("2 ^ 0.5 ^ 2 ^ 3");
+        let result = getResult("2 ^ 0.5 ^ 2 ^ 3").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(((2 ** 0.5) ** 2) ** 3);
@@ -120,7 +102,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('powers 3 imaginary numbers correctly', () => {
-        let result = getResult("2i ^ 0.5i ^ 2 ^ 3i");
+        let result = getResult("2i ^ 0.5i ^ 2 ^ 3i").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(round(result.matrix[0][0].real)).toBe(round(0));
@@ -130,7 +112,7 @@ describe('Scalar arithmetics', () => {
 
     // complex expression
     test('complex expression', () => {
-        let result = getResult("2^2^2 * 3^3^3 +( 207 + (40000+ (2*100000 + 10^7*4) + 4*10^8 + 87799*10^10) + 1)");
+        let result = getResult("2^2^2 * 3^3^3 +( 207 + (40000+ (2*100000 + 10^7*4) + 4*10^8 + 87799*10^10) + 1)").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(877990440555136);
@@ -140,7 +122,7 @@ describe('Scalar arithmetics', () => {
 
     // sign handling
     test('sign before number', () => {
-        let result = getResult("-3");
+        let result = getResult("-3").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(-3);
@@ -148,7 +130,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('sign before imaginary number', () => {
-        let result = getResult("-3i");
+        let result = getResult("-3i").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -156,7 +138,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('sign before parenthesis', () => {
-        let result = getResult("-(3 - 2)");
+        let result = getResult("-(3 - 2)").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(-1);
@@ -164,7 +146,7 @@ describe('Scalar arithmetics', () => {
         }
     });
     test('sign before matrix', () => {
-        let result = getResult("-(3 - 2)");
+        let result = getResult("-(3 - 2)").result
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(-1);

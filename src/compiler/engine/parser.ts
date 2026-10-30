@@ -103,7 +103,6 @@ export class Parser {
 
     private getNumber(): FactorType {
         this.ignoreSpacesAndNewlines();
-        console.log(this.currentToken())
         if (this.currentToken().type === TokenType.EOF) {
             return new MError(
                 "Expected a number",
