@@ -5,7 +5,7 @@ import {MError} from "../../data_models/MError";
 import {MNumber} from "../../data_models/MNumber";
 
 export class VarAssignmentNode {
-    private name: string;
+    name: string;
     private value: TermType;
     private position: Position | null;
 

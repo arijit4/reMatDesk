@@ -16,7 +16,9 @@ export class Executor {
             return node;
         }
         let mini_executor = new Executor(this.input, this.symbolTable);
-        return node.execute(mini_executor);
+        let res = node.execute(mini_executor);
+        this.output += mini_executor.output;
+        return res;
     }
 
     appendOutput(str: string) {

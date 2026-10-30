@@ -21,6 +21,7 @@ import {LessOrEqualNode} from "../nodes/comparisons/less_or_equal_node";
 import {GreaterOrEqualNode} from "../nodes/comparisons/greater_or_equal_node";
 import {KeywordType} from "../../model/keywordType";
 import {ConditionBlock, IfElseNode} from "../nodes/condtions/if_else_node";
+import {PrintableNode} from "../nodes/utility/printable_node";
 
 export class Parser {
     public tokens: Token[];
@@ -43,11 +44,21 @@ export class Parser {
             this.moveToNextToken();
             this.ignoreSpaces();
 
-            return new VarAssignmentNode(
+            let varAssignmentNode: VarAssignmentNode | PrintableNode | MError = new VarAssignmentNode(
                 currentToken.value,
                 this.comparison(false),
                 currentToken.position
-            )
+            );
+            if (varAssignmentNode instanceof MError) {
+                return varAssignmentNode;
+            }
+
+            this.moveToNextToken();
+            this.ignoreSpaces();
+            if (this.currentToken().type === TokenType.NEWLINE || this.currentToken().type === TokenType.EOF) {
+                varAssignmentNode = new PrintableNode(varAssignmentNode);
+            }
+            return varAssignmentNode;
         } else if (currentToken.type === TokenType.KEYWORD && currentToken.value === KeywordType.IF) {
             // no `moveToNextToken() as we have already advanced to the 2nd token
             this.currentIndex = lastValidIndex;
@@ -550,7 +561,7 @@ export class Parser {
             while (
                 ![KeywordType.ELSEIF, KeywordType.ELSE, KeywordType.END].includes(this.currentToken().value)
                 ) {
-                let statement: FactorType | IfElseNode | MError = this.generateAST();
+                let statement = this.generateAST();
                 if (statement instanceof MError) {
                     return statement;
                 }
@@ -562,12 +573,12 @@ export class Parser {
                 }
 
                 this.moveToNextToken();
+                this.ignoreSemicolons();
                 this.ignoreSpacesAndNewlines();
             }
             ifConditionBlock = new ConditionBlock();
         }
         if (this.currentToken().type === TokenType.KEYWORD && this.currentToken().value === KeywordType.END) {
-            console.log(ifElseNode)
             return ifElseNode;
         }
 
@@ -632,6 +643,12 @@ export class Parser {
 
     private ignoreSpaces() {
         while (this.currentIndex < this.tokens.length - 2 && this.currentToken().type === TokenType.SPACE) {
+            this.moveToNextToken();
+        }
+    }
+
+    private ignoreSemicolons() {
+        while (this.currentIndex < this.tokens.length - 1 && this.currentToken().type === TokenType.SEMICOLON) {
             this.moveToNextToken();
         }
     }

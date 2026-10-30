@@ -30,4 +30,6 @@ purely written in TypeScript, it can also be made to run in the browser as well.
 - Control flow
   - `if`, `elseif`, `else`, `end`
 - Comments
+- Printing suppression
+  - using `;` at the end of a line
 - Error messages

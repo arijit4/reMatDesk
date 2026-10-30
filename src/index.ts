@@ -36,4 +36,6 @@ if (tokens instanceof MError) {
         }
         console.log(symbolTable.stringify(true));
     }
+    console.log("========== Output =========");
+    console.log(executor.output);
 }

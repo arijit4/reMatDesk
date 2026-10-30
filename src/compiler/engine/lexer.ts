@@ -150,7 +150,6 @@ export class Lexer {
                 newPosition.addToPosition();
                 tokens.push(new Token(TokenType.RIGHT_SQUARE_PAREN, "]", newPosition));
             } else {
-                console.log("Unexpected character: " + currentChar);
                 return new MError(
                     "Unexpected character " + currentChar,
                     new Position(this.currentLine, this.currentIndex)
