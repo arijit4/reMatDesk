@@ -1,17 +1,17 @@
-if pi < 3
-    x = 1
-elseif pi ~= pi
-    x = 2
-else
-    if pi == pi
-        z = 3;
-    else
-        z = 4
-    end
-    x = 3
-    y = 4
-end
-%%if pi < 3 x = 1 else x = 2 end
-%%(1 - pi) != (-pi) + 1
+n = 0;
 
-%a = [11;3]
+a = 1;
+b = 1;
+
+f = 1;
+
+while n < 100
+    n = n + 1;
+
+    c = a + b;
+    a = b;
+    b = c;
+
+    tantu = a + i * f
+    f = f + 1;
+end

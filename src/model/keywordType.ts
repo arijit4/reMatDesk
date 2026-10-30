@@ -4,6 +4,8 @@ export class KeywordType {
     public static readonly ELSE = "else";
     public static readonly END = "end";
 
+    public static readonly WHILE = "while";
+
     public static readonly TRUE = "true";
     public static readonly FALSE = "false";
 }

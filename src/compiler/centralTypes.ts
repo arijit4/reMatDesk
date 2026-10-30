@@ -9,8 +9,9 @@ import {MNumberBuilder} from "./data_models/MNumberBuilder";
 import {MatrixRangeNode} from "./nodes/arithmetics/matrix_range_node";
 import {VarAccessNode} from "./nodes/variables/var_access_node";
 import {VarAssignmentNode} from "./nodes/variables/var_assignment_node";
-import {IfElseNode} from "./nodes/condtions/if_else_node";
+import {IfElseNode} from "./nodes/controlFlow/if_else_node";
 import {PrintableNode} from "./nodes/utility/printable_node";
+import {WhileLoopNode} from "./nodes/controlFlow/while_loop_node";
 
 
 export type FactorType =
@@ -35,5 +36,6 @@ export type PowerFactorType = FactorType
 export type ParserNode =
     FactorType
     | IfElseNode
-    | PrintableNode;
+    | PrintableNode
+    | WhileLoopNode;
 

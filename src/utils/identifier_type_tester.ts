@@ -3,6 +3,7 @@ export const isKeyword = (value: string): boolean => {
         'if',
         'elseif',
         'else',
-        'end'
+        'end',
+        'while'
     ].includes(value);
 }

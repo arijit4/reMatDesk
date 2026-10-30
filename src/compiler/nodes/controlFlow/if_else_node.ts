@@ -3,6 +3,7 @@ import {Executor} from "../../engine/executor";
 import {MError} from "../../data_models/MError";
 import {MNumber} from "../../data_models/MNumber";
 import {PrintableNode} from "../utility/printable_node";
+import {WhileLoopNode} from "./while_loop_node";
 
 export class IfElseNode {
     private conditionBlocks: ConditionBlock[];
@@ -52,7 +53,7 @@ export class IfElseNode {
 
 export class ConditionBlock {
     private condition: FactorType | null; // null for else block
-    private statements: (FactorType | IfElseNode | PrintableNode)[]
+    private statements: (FactorType | IfElseNode | WhileLoopNode | PrintableNode)[];
 
     constructor(
         condition: FactorType | null = null,
@@ -66,7 +67,7 @@ export class ConditionBlock {
         this.condition = condition;
     }
 
-    addStatements(statements: FactorType | IfElseNode | PrintableNode) {
+    addStatements(statements: FactorType | IfElseNode | WhileLoopNode | PrintableNode) {
         this.statements.push(statements);
     }
 

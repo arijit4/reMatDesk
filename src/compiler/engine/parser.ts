@@ -20,8 +20,9 @@ import {GreaterThanNode} from "../nodes/comparisons/greater_than_node";
 import {LessOrEqualNode} from "../nodes/comparisons/less_or_equal_node";
 import {GreaterOrEqualNode} from "../nodes/comparisons/greater_or_equal_node";
 import {KeywordType} from "../../model/keywordType";
-import {ConditionBlock, IfElseNode} from "../nodes/condtions/if_else_node";
+import {ConditionBlock, IfElseNode} from "../nodes/controlFlow/if_else_node";
 import {PrintableNode} from "../nodes/utility/printable_node";
+import {WhileLoopNode} from "../nodes/controlFlow/while_loop_node";
 
 export class Parser {
     public tokens: Token[];
@@ -35,7 +36,6 @@ export class Parser {
         let ast: ParserNode[] = []
         while (this.currentIndex < this.tokens.length - 1 && this.currentToken().type !== TokenType.EOF) {
             let node = this.generateAST();
-            console.log(node);
             ast.push(node);
             if (node instanceof MError) {
                 break;
@@ -46,6 +46,7 @@ export class Parser {
         }
         return ast;
     }
+
     public generateAST() {
         this.ignoreSpacesAndNewlines();
 
@@ -78,7 +79,11 @@ export class Parser {
             // no `moveToNextToken() as we have already advanced to the 2nd token
             this.currentIndex = lastValidIndex;
             return this.generateIfElseBlock();
+        } else if (currentToken.type === TokenType.KEYWORD && currentToken.value === KeywordType.WHILE) {
+            this.currentIndex = lastValidIndex;
+            return this.generateWhileLoopBlock();
         } else {
+            // normal statement
             this.currentIndex = lastValidIndex;
             return this.comparison(false);
         }
@@ -128,7 +133,6 @@ export class Parser {
     }
 
     private getNumber(): FactorType {
-        console.log(this.currentToken())
         this.ignoreSpacesAndNewlines();
         if (this.currentToken().type === TokenType.EOF) {
             return new MError(
@@ -602,6 +606,33 @@ export class Parser {
             "Invalid conditional expression; expected 'elseif', 'else' or 'end'",
             this.currentToken().position
         );
+    }
+
+    public generateWhileLoopBlock(): MError | WhileLoopNode {
+        this.moveToNextToken();
+        this.ignoreSpaces();
+
+        let condition = this.comparison(false);
+        if (condition instanceof MError) {
+            return condition;
+        }
+
+        let whileLoopNode = new WhileLoopNode(condition);
+
+        while ((this.currentToken().type !== TokenType.KEYWORD || this.currentToken().value !== KeywordType.END)
+        && this.currentIndex < this.tokens.length - 1
+        && this.currentToken().type !== TokenType.EOF) {
+            let statement = this.generateAST();
+            if (statement instanceof MError) {
+                return statement;
+            }
+            whileLoopNode.addBodyStatement(statement);
+
+            this.moveToNextToken();
+            this.ignoreSemicolons();
+            this.ignoreSpacesAndNewlines();
+        }
+        return whileLoopNode;
     }
 
     // ============ Private Helper Methods ============
