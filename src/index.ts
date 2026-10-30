@@ -24,9 +24,9 @@ if (tokens instanceof MError) {
     let symbolTable = new SymbolTable();
     let executor = new Executor(input, symbolTable);
 
-    let x = parser.generateAST();
+    let x = parser.generateInterpretableAST();
     // console.log(JSON.stringify(x, null, 2));
-    let result = executor.execute(x);
+    let result = executor.executeInterpretableAST(x);
     if (result instanceof MError) {
         console.log("========== Executor Error =========");
         console.log(result.stringify(input));

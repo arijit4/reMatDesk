@@ -7,7 +7,7 @@ import {DivisionNode, DotDivisionNode} from "../nodes/arithmetics/division_node"
 import {PlusNode} from "../nodes/arithmetics/plus_node";
 import {MinusNode} from "../nodes/arithmetics/minus_node";
 import {DotPowerNode, PowerNode} from "../nodes/arithmetics/power_node";
-import {FactorType, PowerFactorType, TermType} from "../centralTypes";
+import {FactorType, ParserNode, PowerFactorType, TermType} from "../centralTypes";
 import {MError} from "../data_models/MError";
 import {MNumberBuilder} from "../data_models/MNumberBuilder";
 import {MatrixRangeNode} from "../nodes/arithmetics/matrix_range_node";
@@ -31,6 +31,21 @@ export class Parser {
         this.tokens = tokens;
     }
 
+    public generateInterpretableAST() {
+        let ast: ParserNode[] = []
+        while (this.currentIndex < this.tokens.length - 1 && this.currentToken().type !== TokenType.EOF) {
+            let node = this.generateAST();
+            console.log(node);
+            ast.push(node);
+            if (node instanceof MError) {
+                break;
+            }
+
+            this.moveToNextToken();
+            this.ignoreSpacesAndNewlines();
+        }
+        return ast;
+    }
     public generateAST() {
         this.ignoreSpacesAndNewlines();
 
@@ -113,6 +128,7 @@ export class Parser {
     }
 
     private getNumber(): FactorType {
+        console.log(this.currentToken())
         this.ignoreSpacesAndNewlines();
         if (this.currentToken().type === TokenType.EOF) {
             return new MError(
