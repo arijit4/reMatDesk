@@ -2,7 +2,6 @@ import {FactorType} from "../../centralTypes";
 import {IfElseNode} from "../condtions/if_else_node";
 import {Executor} from "../../engine/executor";
 import {MError} from "../../data_models/MError";
-import {MNumber} from "../../data_models/MNumber";
 import {VarAssignmentNode} from "../variables/var_assignment_node";
 
 export class PrintableNode {
@@ -32,7 +31,7 @@ export class PrintableNode {
                 e.appendOutput(var_name + " = \n" + result.print());
                 // e.appendOutput(result.print());
             }
+            return result;
         }
-        return MNumber.True();
     }
 }
