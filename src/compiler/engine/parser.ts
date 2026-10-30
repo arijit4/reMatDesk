@@ -31,6 +31,8 @@ export class Parser {
     }
 
     public generateAST() {
+        this.ignoreSpacesAndNewlines();
+
         let currentToken = this.currentToken();
         let lastValidIndex = this.currentIndex;
         this.moveToNextToken();
@@ -48,6 +50,7 @@ export class Parser {
             )
         } else if (currentToken.type === TokenType.KEYWORD && currentToken.value === KeywordType.IF) {
             // no `moveToNextToken() as we have already advanced to the 2nd token
+            this.currentIndex = lastValidIndex;
             return this.generateIfElseBlock();
         } else {
             this.currentIndex = lastValidIndex;
@@ -99,6 +102,14 @@ export class Parser {
     }
 
     private getNumber(): FactorType {
+        this.ignoreSpacesAndNewlines();
+        console.log(this.currentToken())
+        if (this.currentToken().type === TokenType.EOF) {
+            return new MError(
+                "Expected a number",
+                this.currentToken().position
+            );
+        }
         if (this.currentToken().type === TokenType.EQUAL_EQUAL) {
             return new MError(
                 `invalid '${this.currentToken().value}' operation`,
@@ -173,7 +184,7 @@ export class Parser {
             )
         } else {
             return new MError(
-                "Expected a number",
+                "Unexpected end of input; expected a number, variable, matrix, or 'end' keyword",
                 this.currentToken().position
             );
         }
@@ -510,47 +521,56 @@ export class Parser {
     }
 
     public generateIfElseBlock(): MError | IfElseNode {
-        let condition = this.comparison(false);
-        if (condition instanceof MError) {
-            return condition;
-        }
-        this.moveToNextToken();
-        this.ignoreSpacesAndNewlines();
-
-        let ifConditionBlock = new ConditionBlock(condition);
-        // fine till here
-
+        let ifConditionBlock = new ConditionBlock();
+        let ifElseNode = new IfElseNode();
+        let ifCount = 0;
         while (
-            this.currentIndex < this.tokens.length - 2
-            && (
-                this.currentToken().value !== KeywordType.ELSEIF ||
-                this.currentToken().value !== KeywordType.ELSE ||
-                this.currentToken().value !== KeywordType.END
-            )
+            [KeywordType.IF, KeywordType.ELSEIF, KeywordType.ELSE].includes(this.currentToken().value)
             ) {
-            let statement: FactorType | IfElseNode | MError = this.generateAST();
-            if (statement instanceof MError) {
-                return statement;
+            let isElse = false;
+            if (this.currentToken().value === KeywordType.IF) {
+                ifCount++;
+                // if
             }
-            console.log(statement);
-            ifConditionBlock.addStatements(statement);
+            if (this.currentToken().value === KeywordType.ELSE) {
+                // eat sneakers, do nothing
+                isElse = true;
+            } else {
+                this.moveToNextToken();
+                this.ignoreSpaces();
+
+                let condition = this.comparison(false);
+                if (condition instanceof MError) {
+                    return condition;
+                }
+                ifConditionBlock.setCondition(condition);
+            }
             this.moveToNextToken();
             this.ignoreSpacesAndNewlines();
+
+            while (
+                ![KeywordType.ELSEIF, KeywordType.ELSE, KeywordType.END].includes(this.currentToken().value)
+                ) {
+                let statement: FactorType | IfElseNode | MError = this.generateAST();
+                if (statement instanceof MError) {
+                    return statement;
+                }
+                ifConditionBlock.addStatements(statement);
+                if (isElse) {
+                    ifElseNode.setElseBlock(ifConditionBlock);
+                } else {
+                    ifElseNode.addConditionBlock(ifConditionBlock);
+                }
+
+                this.moveToNextToken();
+                this.ignoreSpacesAndNewlines();
+            }
+            ifConditionBlock = new ConditionBlock();
         }
         if (this.currentToken().type === TokenType.KEYWORD && this.currentToken().value === KeywordType.END) {
-            let ifElseNode = new IfElseNode([ifConditionBlock], null);
+            console.log(ifElseNode)
             return ifElseNode;
         }
-
-
-        // while (this.currentToken().type === TokenType.KEYWORD && this.currentToken().value === KeywordType.ELSEIF) {
-        //     this.ignoreSpaces();
-        //     let elseifCondition = this.comparison(false);
-        //     if (elseifCondition instanceof MError) {
-        //         return elseifCondition;
-        //     }
-        //     ifElseNode.addElseIfBlock(new ConditionBlock(elseifCondition));
-        // }
 
         return new MError(
             "Invalid conditional expression; expected 'elseif', 'else' or 'end'",
@@ -619,7 +639,7 @@ export class Parser {
 
     private ignoreSpacesAndNewlines() {
         while (
-            this.currentIndex < this.tokens.length - 2
+            this.currentIndex < this.tokens.length - 1
             && (
                 this.currentToken().type === TokenType.SPACE
                 || this.currentToken().type === TokenType.NEWLINE

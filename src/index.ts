@@ -4,15 +4,11 @@ import {Executor} from "./compiler/engine/executor";
 import {MError} from "./compiler/data_models/MError";
 import {SymbolTable} from "./model/symbol_table";
 import {MNumber} from "./compiler/data_models/MNumber";
+import {readFileSync} from "fs";
 
-let input =
-    `if pi < 3
-         x = 1
-         y = 2
-         
-         z = x + y - pi
-    `;
-// input = "x = y = 2"
+let input = readFileSync("../reMatDesk/src/input.m", "utf8")
+    .replace(/\r\n?/g, '\n');
+
 
 let lexer = new Lexer(input);
 
@@ -20,7 +16,7 @@ let tokens = lexer.tokenize();
 // console.log(tokens);
 if (tokens instanceof MError) {
     console.log("========== Lexer Error =========");
-    console.log(tokens.toString());
+    console.log(tokens.stringify(input));
     process.exit(1);
 } else {
     let parser = new Parser(tokens);

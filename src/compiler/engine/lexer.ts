@@ -25,6 +25,10 @@ export class Lexer {
             if (currentChar === ' ') {
                 // this.currentIndex++;
                 tokens.push(this.generateSpaceToken());
+            } else if (currentChar === '%') {
+                while (this.indexInRange() && !isNewline(this.currentChar())) {
+                    this.currentIndex++;
+                }
             } else if (currentChar === ';') {
                 this.currentIndex++;
                 newPosition.addToPosition();
@@ -41,11 +45,7 @@ export class Lexer {
                 let numToken = this.generateNumberToken();
                 this.currentIndex = numToken.position!.posEnd;
                 tokens.push(numToken);
-            }/* else if (currentChar === 'i') {
-                this.currentIndex++;
-                newPosition.addToPosition();
-                tokens.push(new Token(TokenType.I_NUMBER, "1", newPosition));
-            }*/ else if (isAlpha(currentChar) || currentChar === '_') {
+            } else if (isAlpha(currentChar) || currentChar === '_') {
                 tokens.push(this.generateIdentifierToken());
             } else if (isNewline(currentChar)) {
                 this.currentIndex++
@@ -85,16 +85,16 @@ export class Lexer {
                 } else {
                     tokens.push(new Token(TokenType.LESS, "<", newPosition));
                 }
-            } else if (currentChar === "!") {
+            } else if (currentChar === "~") {
                 this.currentIndex++;
                 newPosition.addToPosition();
 
                 if (this.currentChar() === "=") {
                     this.currentIndex++;
                     newPosition.addToPosition();
-                    tokens.push(new Token(TokenType.NOT_EQUAL, "!=", newPosition));
+                    tokens.push(new Token(TokenType.NOT_EQUAL, "~=", newPosition));
                 } else {
-                    tokens.push(new Token(TokenType.NOT, "!", newPosition));
+                    tokens.push(new Token(TokenType.NOT, "~", newPosition));
                 }
             } else if (isOperator(currentChar)) {
                 this.currentIndex++;
@@ -150,7 +150,11 @@ export class Lexer {
                 newPosition.addToPosition();
                 tokens.push(new Token(TokenType.RIGHT_SQUARE_PAREN, "]", newPosition));
             } else {
-                return new MError(`Unexpected character '${currentChar}' at position ${this.currentLine}:${this.currentIndex}`);
+                console.log("Unexpected character: " + currentChar);
+                return new MError(
+                    "Unexpected character " + currentChar,
+                    new Position(this.currentLine, this.currentIndex)
+                );
             }
         }
 
@@ -171,7 +175,14 @@ export class Lexer {
         let dotCount = 0;
         let newPosition = new Position(this.currentLine, this.currentIndex);
 
-        while (this.indexInRange() && (isDigit(this.currentChar()) || this.currentChar() === '.' || this.currentChar() === 'i')) {
+        while (
+            this.indexInRange() &&
+            (
+                isDigit(this.currentChar()) ||
+                this.currentChar() === '.' ||
+                this.currentChar() === 'i'
+            )
+            ) {
             if (this.currentChar() === 'i') {
                 this.currentIndex++;
                 newPosition.addToPosition();
@@ -220,6 +231,7 @@ export class Lexer {
             newPosition
         );
     }
+
     generateIdentifierToken(): Token {
         let id = "";
         let newPosition = new Position(this.currentLine, this.currentIndex);

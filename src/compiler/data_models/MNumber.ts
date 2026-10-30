@@ -362,6 +362,19 @@ export class MNumber {
         return this.dimensions.row === 1 && this.dimensions.column === 1;
     }
 
+    isTrue(): boolean {
+        return this.matrix[0][0].real === 1;
+
+    }
+
+    static True(): MNumber {
+        return new MNumber(new MAtom(1, 0, null, true));
+    }
+
+    static False(): MNumber {
+        return new MNumber(new MAtom(0, 0, null, true));
+    }
+
     validate(): MNumber | MError {
         // clean up empty rows
         this.matrix = this.matrix.filter(row => row.length > 0);

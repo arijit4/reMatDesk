@@ -26,7 +26,8 @@ purely written in TypeScript, it can also be made to run in the browser as well.
   - Assignment
   - Accessing
 - Comparisons
-  - `==`,`!=`, `>`, `<`, `>=`, `<=`
+  - `==`,`~=`, `>`, `<`, `>=`, `<=`
 - Control flow
-  - If statements
+  - `if`, `elseif`, `else`, `end`
+- Comments
 - Error messages

@@ -78,7 +78,7 @@ describe('Equality operations', () => {
 describe('Inequality operations', () => {
     // equality testing
     test('True comparison', () => {
-        let result = getResult("3^3 != 27");
+        let result = getResult("3^3 ~= 27");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(0);
@@ -86,7 +86,7 @@ describe('Inequality operations', () => {
         }
     });
     test('True comparison with matrix', () => {
-        let result = getResult("[1 3; 2 4] != [ 1 2; 3 4]");
+        let result = getResult("[1 3; 2 4] ~= [ 1 2; 3 4]");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.dimensions.row).toBe(2);
@@ -106,7 +106,7 @@ describe('Inequality operations', () => {
         }
     });
     test('False comparison', () => {
-        let result = getResult("3^3 != 28");
+        let result = getResult("3^3 ~= 28");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBeCloseTo(1);
@@ -114,7 +114,7 @@ describe('Inequality operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("1 - pi != (-pi) + 1");
+        let result = getResult("1 - pi ~= (-pi) + 1");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);
@@ -122,7 +122,7 @@ describe('Inequality operations', () => {
         }
     });
     test('parenthesis handling', () => {
-        let result = getResult("(1 - pi) != (-pi) + 1");
+        let result = getResult("(1 - pi) ~= (-pi) + 1");
         expect(result).toBeInstanceOf(MNumber);
         if (result instanceof MNumber) {
             expect(result.matrix[0][0].real).toBe(0);

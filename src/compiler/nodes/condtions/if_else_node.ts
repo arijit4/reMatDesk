@@ -1,6 +1,7 @@
 import {FactorType} from "../../centralTypes";
 import {Executor} from "../../engine/executor";
 import {MError} from "../../data_models/MError";
+import {MNumber} from "../../data_models/MNumber";
 
 export class IfElseNode {
     private conditionBlocks: ConditionBlock[];
@@ -18,56 +19,81 @@ export class IfElseNode {
         this.conditionBlocks.push(block);
     }
 
-    execute(e: Executor): boolean {
-        let executionCount = 0;
+    setElseBlock(block: ConditionBlock) {
+        this.else_block = block;
+    }
 
+    execute(e: Executor): MNumber {
         for (let block of this.conditionBlocks) {
             let result = block.execute(e);
             if (result instanceof MError) {
-                return false;
+                return MNumber.False();
             }
-            if (result !== null) {
-                executionCount++;
+
+            if (result.isTrue()) {
+                return MNumber.True();
+            }
+        }
+        if (this.else_block !== null) {
+            let result = this.else_block.execute(e);
+            if (result instanceof MError) {
+                return MNumber.False();
+            }
+
+            if (result.isTrue()) {
+                return MNumber.True();
             }
         }
 
-        return executionCount <= 1;
+        return MNumber.False();
     }
 }
 
 export class ConditionBlock {
-    private condition: FactorType;
+    private condition: FactorType | null; // null for else block
     private statements: (FactorType | IfElseNode)[]
 
     constructor(
-        condition: FactorType,
-        block: FactorType[] = []
+        condition: FactorType | null = null,
+        block: (FactorType | IfElseNode)[] = []
     ) {
         this.condition = condition;
         this.statements = block;
+    }
+
+    setCondition(condition: FactorType | null) {
+        this.condition = condition;
     }
 
     addStatements(statements: FactorType | IfElseNode) {
         this.statements.push(statements);
     }
 
-    execute(e: Executor) {
-        let conditionResult = e.execute(this.condition);
-        if (conditionResult instanceof MError) {
-            return false;
-        }
-        if (conditionResult === true || conditionResult === false) {
-            return false;
-        }
-
-        if (conditionResult.matrix[0][0].real === 1) {
+    execute(e: Executor) : MNumber | MError {
+        if (this.condition === null) {
             for (let statement of this.statements) {
                 let result = e.execute(statement);
                 if (result instanceof MError) {
                     return result;
                 }
             }
+            return MNumber.True();
         }
-        return true;
+
+        let conditionResult = e.execute(this.condition);
+        if (conditionResult instanceof MError) {
+            return MNumber.False();
+        }
+
+        if (conditionResult.isTrue()) {
+            for (let statement of this.statements) {
+                let result = e.execute(statement);
+                if (result instanceof MError) {
+                    return result;
+                }
+            }
+            return MNumber.True();
+        }
+        return MNumber.False();
     }
 }
