@@ -12,6 +12,7 @@ import {VarAssignmentNode} from "./nodes/variables/var_assignment_node";
 import {IfElseNode} from "./nodes/controlFlow/if_else_node";
 import {PrintableNode} from "./nodes/utility/printable_node";
 import {WhileLoopNode} from "./nodes/controlFlow/while_loop_node";
+import {ForLoopNode} from "./nodes/controlFlow/for_loop_node";
 
 
 export type FactorType =
@@ -37,5 +38,6 @@ export type ParserNode =
     FactorType
     | IfElseNode
     | PrintableNode
-    | WhileLoopNode;
+    | WhileLoopNode
+    | ForLoopNode;
 

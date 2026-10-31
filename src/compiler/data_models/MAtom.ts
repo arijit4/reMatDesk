@@ -1,4 +1,5 @@
 import {Position} from "../../model/position";
+import {MNumber} from "./MNumber";
 
 export class MAtom {
     public real: number;
@@ -128,6 +129,10 @@ export class MAtom {
 
     hasImaginary() {
         return Math.abs(this.imaginary) > 1e-13;
+    }
+
+    toMNumber() {
+        return new MNumber(this);
     }
 
     stringify(printAsIfHasImaginary: boolean = false): string {

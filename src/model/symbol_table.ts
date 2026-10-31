@@ -42,7 +42,11 @@ export class SymbolTable {
                 result += " \t\t(default value)\n";
             }
             if (!value.matrix[0][0].isDefault) {
-                result += `${key} = ${value.matrix[0][0].real} + ${value.matrix[0][0].imaginary}i`;
+                if (value.isScalar()) {
+                    result += `${key} = ${value.matrix[0][0].real} + ${value.matrix[0][0].imaginary}i`;
+                } else {
+                    result += `${key} = [${value.dimensions.row}x${value.dimensions.column}]`;
+                }
                 result += " \n";
             }
         }

@@ -30,6 +30,8 @@ purely written in TypeScript, it can also be made to run in the browser as well.
 - Control flow
   - `if`, `elseif`, `else`, `end`
   - `while`, `end`
+  - `for`, `end`
+  - nested control flow
 - Comments
 - Printing suppression
   - using `;` at the end of a line

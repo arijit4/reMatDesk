@@ -23,6 +23,7 @@ import {KeywordType} from "../../model/keywordType";
 import {ConditionBlock, IfElseNode} from "../nodes/controlFlow/if_else_node";
 import {PrintableNode} from "../nodes/utility/printable_node";
 import {WhileLoopNode} from "../nodes/controlFlow/while_loop_node";
+import {ForLoopNode} from "../nodes/controlFlow/for_loop_node";
 
 export class Parser {
     public tokens: Token[];
@@ -82,10 +83,19 @@ export class Parser {
         } else if (currentToken.type === TokenType.KEYWORD && currentToken.value === KeywordType.WHILE) {
             this.currentIndex = lastValidIndex;
             return this.generateWhileLoopBlock();
+        } else if (currentToken.type === TokenType.KEYWORD && currentToken.value === KeywordType.FOR) {
+            this.currentIndex = lastValidIndex;
+            return this.generateForLoopBlock();
         } else {
             // normal statement
             this.currentIndex = lastValidIndex;
-            return this.comparison(false);
+            let stmt = this.comparison(false);
+            if (this.lookupNextToken().type === TokenType.NEWLINE || this.lookupNextToken().type === TokenType.EOF) {
+                this.moveToNextToken();
+                this.ignoreSpaces();
+                return new PrintableNode(stmt);
+            }
+            return stmt;
         }
     }
 
@@ -141,6 +151,7 @@ export class Parser {
                 TokenType.SEMICOLON,
                 TokenType.EQUAL
             ].includes(this.currentToken().type)) {
+            console.log(this.currentToken())
             return new MError(
                 "Expected a number",
                 this.currentToken().position
@@ -641,13 +652,41 @@ export class Parser {
         return whileLoopNode;
     }
 
+    public generateForLoopBlock(): MError | ForLoopNode {
+        this.moveToNextToken();
+        this.ignoreSpaces();
+
+        // console.log(this.currentToken())
+        let index_node = this.generateAST();//this.comparison(false);
+        console.log(index_node);
+        if (index_node instanceof MError) {
+            return index_node;
+        }
+
+        let forLoopNode = new ForLoopNode(index_node);
+
+        while ((this.currentToken().type !== TokenType.KEYWORD || this.currentToken().value !== KeywordType.END)
+        && this.currentIndex < this.tokens.length - 1
+        && this.currentToken().type !== TokenType.EOF) {
+            let statement = this.generateAST();
+            if (statement instanceof MError) {
+                return statement;
+            }
+            forLoopNode.addBodyStatement(statement);
+
+            this.moveToNextToken();
+            this.ignoreSemicolons();
+            this.ignoreSpacesAndNewlines();
+        }
+        return forLoopNode;
+    }
+
     // ============ Private Helper Methods ============
     public lookupNextToken() {
-        try {
-            return this.tokens[this.currentIndex + 1];
-        } catch (error) {
-            return null;
+        if (this.currentIndex + 1 >= this.tokens.length) {
+            return new Token(TokenType.EOF, "", this.currentToken().position);
         }
+        return this.tokens[this.currentIndex + 1];
     }
 
     private getPowerOperator() {

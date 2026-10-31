@@ -5,6 +5,7 @@ export class KeywordType {
     public static readonly END = "end";
 
     public static readonly WHILE = "while";
+    public static readonly FOR = "for";
 
     public static readonly TRUE = "true";
     public static readonly FALSE = "false";

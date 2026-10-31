@@ -6,7 +6,7 @@ import {MNumber} from "../../data_models/MNumber";
 
 export class VarAssignmentNode {
     name: string;
-    private value: TermType;
+    value: TermType;
     private position: Position | null;
 
     constructor(
