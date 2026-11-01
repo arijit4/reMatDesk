@@ -98,7 +98,7 @@ export class Parser {
             // normal statement
             this.currentIndex = lastValidIndex;
             let stmt = this.comparison(false);
-            if (this.lookupNextToken().type === TokenType.NEWLINE || this.lookupNextToken().type === TokenType.EOF) {
+            if (this.lookupNextTokenIgnoringSpaces().type === TokenType.NEWLINE || this.lookupNextTokenIgnoringSpaces().type === TokenType.EOF) {
                 this.moveToNextToken();
                 this.ignoreSpaces();
                 return new PrintableNode(stmt);
@@ -692,11 +692,15 @@ export class Parser {
     }
 
     // ============ Private Helper Methods ============
-    public lookupNextToken() {
-        if (this.currentIndex + 1 >= this.tokens.length) {
+    public lookupNextTokenIgnoringSpaces() {
+        let currentI = this.currentIndex;
+        while (currentI < this.tokens.length - 1 && this.tokens[currentI].type === TokenType.SPACE) {
+            currentI++;
+        }
+        if (currentI + 1 >= this.tokens.length) {
             return new Token(TokenType.EOF, "", this.currentToken().position);
         }
-        return this.tokens[this.currentIndex + 1];
+        return this.tokens[currentI + 1];
     }
 
     private getPowerOperator() {
