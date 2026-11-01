@@ -8,6 +8,7 @@ export class SymbolTable {
     constructor() {
         this.dictionary = {};
 
+        this.add("i", new MNumber(new MAtom(0, 1, null, true)));
         this.add("pi", new MNumber(new MAtom(Math.PI, 0, null, true)));
         this.add("e", new MNumber(new MAtom(Math.exp(1), 0, null, true)));
 

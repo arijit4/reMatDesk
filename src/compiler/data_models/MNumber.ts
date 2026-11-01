@@ -54,7 +54,10 @@ export class MNumber {
     }
 
     print() {
-        let output = "";
+        if (this.isScalar()) {
+            return this.matrix[0][0].stringify();
+        }
+        let output = "\n";
         for (let i = 0; i < this.dimensions.row; i++) {
             let row = this.matrix[i];
             let rowString = row.map(

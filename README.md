@@ -36,3 +36,14 @@ purely written in TypeScript, it can also be made to run in the browser as well.
 - Printing suppression
   - using `;` at the end of a line
 - Error messages
+
+### Next to be added *or fixed*
+
+- Variable
+  - accessing through index
+    - `a(x)` or `a(x,y)`
+  - Assignment through index
+    - `a(x) = 1` or `a(x,y) = 1`
+- Functions
+- String literals
+  - `'string'` or `"string"`

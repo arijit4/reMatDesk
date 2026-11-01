@@ -30,6 +30,6 @@ if (tokens instanceof MError) {
 
     console.log("========== Symbol Table =========");
     console.log(symbolTable.stringify(true));
-    console.log("========== Output =========");
+    console.log("\n========== Output =========");
     console.log(executor.getOutput());
 }

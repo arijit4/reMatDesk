@@ -57,7 +57,15 @@ export class Parser {
         this.ignoreSpaces();
         let secondToken = this.currentToken();
 
-        if (currentToken.type === TokenType.IDENTIFIER && secondToken.type === TokenType.EQUAL) {
+        if (
+            (
+                currentToken.type === TokenType.IDENTIFIER
+                || (
+                    currentToken.type === TokenType.I_NUMBER
+                    && currentToken.value === "i"
+                )
+            )
+            && secondToken.type === TokenType.EQUAL) {
             this.moveToNextToken();
             this.ignoreSpaces();
 
@@ -151,7 +159,7 @@ export class Parser {
                 TokenType.SEMICOLON,
                 TokenType.EQUAL
             ].includes(this.currentToken().type)) {
-            console.log(this.currentToken())
+            // console.log(this.currentToken())
             return new MError(
                 "Expected a number",
                 this.currentToken().position
@@ -198,7 +206,9 @@ export class Parser {
             n = new MNumber(
                 new MAtom(
                     0,
-                    sign.matrix[0][0].real * parseFloat(this.currentToken().value),
+                    sign.matrix[0][0].real * parseFloat(
+                        this.currentToken().value === "i" ? "1" : this.currentToken().value
+                    ),
                     this.currentToken().position
                 )
             );
@@ -658,7 +668,7 @@ export class Parser {
 
         // console.log(this.currentToken())
         let index_node = this.generateAST();//this.comparison(false);
-        console.log(index_node);
+        // console.log(index_node);
         if (index_node instanceof MError) {
             return index_node;
         }

@@ -243,7 +243,7 @@ export class Lexer {
         if (id === "i") {
             return new Token(
                 TokenType.I_NUMBER,
-                "1",
+                "i",
                 newPosition
             );
         } else if (isKeyword(id)) {
