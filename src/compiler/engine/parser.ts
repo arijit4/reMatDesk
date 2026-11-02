@@ -600,7 +600,34 @@ export class Parser {
                 if (condition instanceof MError) {
                     return condition;
                 }
-                ifConditionBlock.setCondition(condition);
+                // condition should not be printed
+                if (condition instanceof PrintableNode) {
+                    if (condition.node instanceof IfElseNode) {
+                        return new MError(
+                            "Invalid conditional expression",
+                            this.currentToken().position
+                        );
+                    } else if (condition.node instanceof WhileLoopNode) {
+                        return new MError(
+                            "Invalid conditional expression",
+                            this.currentToken().position
+                        );
+                    } else if (condition.node instanceof ForLoopNode) {
+                        return new MError(
+                            "Invalid conditional expression",
+                            this.currentToken().position
+                        );
+                    }
+                    condition = condition.node;
+                }
+                ifConditionBlock.setCondition(
+                    // in if node and while node,
+                    // only 0 is considered false, and everything else is considered true
+                    new NotEqualNode(
+                        condition,
+                        MNumber.False()
+                    )
+                );
             }
             this.moveToNextToken();
             this.ignoreSpacesAndNewlines();
@@ -643,8 +670,37 @@ export class Parser {
         if (condition instanceof MError) {
             return condition;
         }
+        // console.log(condition)
+        // condition should not be printed
+        if (condition instanceof PrintableNode) {
+            if (condition.node instanceof IfElseNode) {
+                return new MError(
+                    "Invalid conditional expression",
+                    this.currentToken().position
+                );
+            } else if (condition.node instanceof WhileLoopNode) {
+                return new MError(
+                    "Invalid conditional expression",
+                    this.currentToken().position
+                );
+            } else if (condition.node instanceof ForLoopNode) {
+                return new MError(
+                    "Invalid conditional expression",
+                    this.currentToken().position
+                );
+            }
+            condition = condition.node;
+        }
+        // console.log(condition)
 
-        let whileLoopNode = new WhileLoopNode(condition);
+        let whileLoopNode = new WhileLoopNode(
+            // in if node and while node,
+            // only 0 is considered false, and everything else is considered true
+            new NotEqualNode(
+                condition,
+                MNumber.False()
+            )
+        );
 
         while ((this.currentToken().type !== TokenType.KEYWORD || this.currentToken().value !== KeywordType.END)
         && this.currentIndex < this.tokens.length - 1
